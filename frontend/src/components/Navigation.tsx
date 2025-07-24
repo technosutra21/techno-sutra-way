@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Home, Map, Users, Route, Menu } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { LanguageSwitcher, useLanguage } from '@/components/LanguageSwitcher';
 import {
   Sheet,
   SheetContent,
