@@ -30,6 +30,23 @@ const Map = () => {
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [selectedWaypoint, setSelectedWaypoint] = useState<any>(null);
   const [mapStyle, setMapStyle] = useState('dark');
+  const [isLoading, setIsLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredWaypoints, setFilteredWaypoints] = useState(ORIGINAL_ROUTE.waypoints);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  // Filter waypoints based on search
+  useEffect(() => {
+    if (searchTerm) {
+      const filtered = ORIGINAL_ROUTE.waypoints.filter(waypoint =>
+        waypoint.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        waypoint.chapter.toString().includes(searchTerm)
+      );
+      setFilteredWaypoints(filtered);
+    } else {
+      setFilteredWaypoints(ORIGINAL_ROUTE.waypoints);
+    }
+  }, [searchTerm]);
 
   useEffect(() => {
     if (!mapContainer.current) return;
