@@ -25,18 +25,18 @@ const ORIGINAL_ROUTE = {
 
 const Map = () => {
   const mapContainer = useRef<HTMLDivElement>(null);
-  const map = useRef<mapboxgl.Map | null>(null);
+  const map = useRef<maptilersdk.Map | null>(null);
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [selectedWaypoint, setSelectedWaypoint] = useState<any>(null);
-  const [mapStyle, setMapStyle] = useState('mapbox://styles/mapbox/dark-v11');
+  const [mapStyle, setMapStyle] = useState('dark');
 
   useEffect(() => {
     if (!mapContainer.current) return;
 
-    // Initialize map with cyberpunk dark theme
-    mapboxgl.accessToken = 'pk.eyJ1IjoidGVjaG5vc3V0cmEiLCJhIjoiY2x4eHh4eHh4In0.dummy'; // User will need to provide their token
+    // Set MapTiler API key
+    maptilersdk.config.apiKey = 'rg7OAqXjLo7cLdwqlrVt';
     
-    map.current = new mapboxgl.Map({
+    map.current = new maptilersdk.Map({
       container: mapContainer.current,
       style: mapStyle,
       center: ORIGINAL_ROUTE.start as [number, number],
@@ -48,7 +48,7 @@ const Map = () => {
 
     // Add navigation controls
     map.current.addControl(
-      new mapboxgl.NavigationControl({
+      new maptilersdk.NavigationControl({
         visualizePitch: true,
       }),
       'top-right'
