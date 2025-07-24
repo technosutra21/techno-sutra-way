@@ -76,18 +76,21 @@ const Navigation = () => {
             <span className="font-bold text-primary text-glow">Techno Sutra</span>
           </Link>
           
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="sm">
-                <Menu className="w-5 h-5" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="cyberpunk-card">
-              <div className="mt-8">
-                <NavContent isMobile />
-              </div>
-            </SheetContent>
-          </Sheet>
+          <div className="flex items-center gap-2">
+            <LanguageSwitcher />
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="sm">
+                  <Menu className="w-5 h-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="cyberpunk-card">
+                <div className="mt-8">
+                  <NavContent isMobile />
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
       </div>
 
