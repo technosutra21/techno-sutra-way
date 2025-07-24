@@ -2,95 +2,99 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
+/* TECHNO SUTRA - Cyberpunk AMOLED Design System
+All colors MUST be HSL for maximum compatibility.
 */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Pure Black AMOLED Background */
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    /* Card system with subtle glow */
+    --card: 240 100% 2%;
+    --card-foreground: 0 0% 95%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    /* Popover dark */
+    --popover: 240 100% 1%;
+    --popover-foreground: 0 0% 95%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Neon Cyan Primary */
+    --primary: 180 100% 50%;
+    --primary-foreground: 0 0% 0%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Dark secondary with neon accent */
+    --secondary: 240 100% 8%;
+    --secondary-foreground: 180 100% 50%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Muted dark tones */
+    --muted: 240 50% 5%;
+    --muted-foreground: 240 20% 60%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Neon Purple Accent */
+    --accent: 280 100% 60%;
+    --accent-foreground: 0 0% 0%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* Neon Red Destructive */
+    --destructive: 0 100% 50%;
+    --destructive-foreground: 0 0% 0%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    /* Borders with glow */
+    --border: 240 100% 10%;
+    --input: 240 100% 8%;
+    --ring: 180 100% 50%;
 
-    --radius: 0.5rem;
+    /* Rounded corners */
+    --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 98%;
+    /* Cyberpunk gradients */
+    --gradient-neon: linear-gradient(135deg, hsl(180 100% 50%), hsl(280 100% 60%));
+    --gradient-dark: linear-gradient(180deg, hsl(240 100% 1%), hsl(240 100% 3%));
+    --gradient-glow: linear-gradient(135deg, hsl(180 100% 50% / 0.1), hsl(280 100% 60% / 0.1));
 
-    --sidebar-foreground: 240 5.3% 26.1%;
+    /* Neon glow effects */
+    --glow-cyan: 0 0 20px hsl(180 100% 50% / 0.5);
+    --glow-purple: 0 0 20px hsl(280 100% 60% / 0.5);
+    --glow-red: 0 0 20px hsl(0 100% 50% / 0.5);
 
-    --sidebar-primary: 240 5.9% 10%;
+    /* Sidebar dark theme */
+    --sidebar-background: 240 100% 1%;
+    --sidebar-foreground: 0 0% 90%;
+    --sidebar-primary: 180 100% 50%;
+    --sidebar-primary-foreground: 0 0% 0%;
+    --sidebar-accent: 240 100% 5%;
+    --sidebar-accent-foreground: 180 100% 50%;
+    --sidebar-border: 240 100% 8%;
+    --sidebar-ring: 180 100% 50%;
 
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Animation timings */
+    --transition-fast: 150ms ease-out;
+    --transition-normal: 300ms ease-out;
+    --transition-slow: 500ms ease-out;
   }
 
+  /* Dark mode (default for cyberpunk theme) */
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
+    --card: 240 100% 2%;
+    --card-foreground: 0 0% 95%;
+    --popover: 240 100% 1%;
+    --popover-foreground: 0 0% 95%;
+    --primary: 180 100% 50%;
+    --primary-foreground: 0 0% 0%;
+    --secondary: 240 100% 8%;
+    --secondary-foreground: 180 100% 50%;
+    --muted: 240 50% 5%;
+    --muted-foreground: 240 20% 60%;
+    --accent: 280 100% 60%;
+    --accent-foreground: 0 0% 0%;
+    --destructive: 0 100% 50%;
+    --destructive-foreground: 0 0% 0%;
+    --border: 240 100% 10%;
+    --input: 240 100% 8%;
+    --ring: 180 100% 50%;
   }
 }
 
@@ -101,5 +105,74 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  /* Cyberpunk utilities */
+  .neon-glow {
+    box-shadow: var(--glow-cyan);
+    transition: box-shadow var(--transition-normal);
+  }
+
+  .neon-glow:hover {
+    box-shadow: var(--glow-cyan), 0 0 40px hsl(180 100% 50% / 0.3);
+  }
+
+  .purple-glow {
+    box-shadow: var(--glow-purple);
+    transition: box-shadow var(--transition-normal);
+  }
+
+  .purple-glow:hover {
+    box-shadow: var(--glow-purple), 0 0 40px hsl(280 100% 60% / 0.3);
+  }
+
+  .gradient-neon {
+    background: var(--gradient-neon);
+  }
+
+  .gradient-dark {
+    background: var(--gradient-dark);
+  }
+
+  .text-glow {
+    text-shadow: 0 0 10px currentColor;
+  }
+
+  .border-neon {
+    border: 1px solid hsl(var(--primary));
+    box-shadow: 0 0 10px hsl(var(--primary) / 0.3);
+  }
+
+  .cyberpunk-card {
+    background: var(--gradient-dark);
+    border: 1px solid hsl(var(--border));
+    backdrop-filter: blur(10px);
+    transition: all var(--transition-normal);
+  }
+
+  .cyberpunk-card:hover {
+    border-color: hsl(var(--primary));
+    box-shadow: var(--glow-cyan);
+    transform: translateY(-2px);
+  }
+
+  /* Map styles */
+  .mapboxgl-popup-content {
+    background: hsl(var(--card)) !important;
+    border: 1px solid hsl(var(--border)) !important;
+    border-radius: var(--radius) !important;
+    color: hsl(var(--foreground)) !important;
+  }
+
+  .mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip {
+    border-top-color: hsl(var(--card)) !important;
   }
 }
