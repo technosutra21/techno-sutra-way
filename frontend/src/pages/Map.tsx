@@ -184,6 +184,10 @@ const Map = () => {
     });
   };
 
+  const toggleFullscreen = () => {
+    setIsFullscreen(!isFullscreen);
+  };
+
   return (
     <div className="h-screen relative overflow-hidden bg-background">
       {/* Map Container */}
