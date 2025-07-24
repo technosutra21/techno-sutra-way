@@ -221,11 +221,25 @@ const Gallery = () => {
             </p>
             
             <div className="flex gap-3">
-              <Button className="gradient-neon text-black font-bold">
+              <Button 
+                className="gradient-neon text-black font-bold"
+                onClick={() => openModelViewer(selectedModel)}
+              >
                 <Eye className="w-4 h-4 mr-2" />
-                Ver em AR
+                Abrir Visualizador 3D
               </Button>
-              <Button variant="outline" className="border-neon">
+              <Button 
+                variant="outline" 
+                className="border-neon"
+                onClick={() => {
+                  const link = document.createElement('a');
+                  link.href = selectedModel.modelUrl;
+                  link.download = `technosutra_${selectedModel.title.replace(/\s+/g, '_')}.glb`;
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
+                }}
+              >
                 <Download className="w-4 h-4 mr-2" />
                 Download GLB
               </Button>
