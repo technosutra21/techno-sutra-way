@@ -9,12 +9,12 @@ import { motion } from 'framer-motion';
 // Generate 56 models data
 const MODELS = Array.from({ length: 56 }, (_, i) => ({
   id: i + 1,
-  title: `Personagem ${i + 1}`,
-  description: `Personagem místico do capítulo ${i + 1} do Sutra Stem Array`,
+  title: `Capítulo ${i + 1}`,
+  description: `Personagem místico do capítulo ${i + 1} do Sutra Stem Array - Explore este modelo 3D sagrado da jornada cyberpunk.`,
   chapter: i + 1,
-  modelUrl: `https://cdn.statically.io/gh/technosutra21/technosutra/master/modelo${i + 1}.glb`,
-  thumbnailUrl: `https://via.placeholder.com/300x200/000011/00ffff?text=Modelo+${i + 1}`,
-  tags: ['Budista', 'Místico', '3D', 'AR'],
+  modelUrl: `https://technosutra21.github.io/technosutra/modelo${i + 1}.glb`,
+  thumbnailUrl: `https://via.placeholder.com/300x200/000011/00ffff?text=Capítulo+${i + 1}`,
+  tags: ['Budista', 'Místico', '3D', 'Cyberpunk'],
   rarity: i % 7 === 0 ? 'legendary' : i % 3 === 0 ? 'epic' : 'common',
   downloads: Math.floor(Math.random() * 10000),
   rating: (4 + Math.random()).toFixed(1)
