@@ -139,7 +139,7 @@ const Map = () => {
           setSelectedWaypoint(waypoint);
         });
 
-        new mapboxgl.Marker(el)
+        new maptilersdk.Marker(el)
           .setLngLat(waypoint.coordinates)
           .addTo(map.current!);
       });
