@@ -103,6 +103,22 @@ const Map = () => {
     setIsCyberpunkMode(cyberpunk);
   };
 
+  // Filter waypoints based on search
+  useEffect(() => {
+    if (searchTerm) {
+      const filtered = waypoints.filter(waypoint =>
+        waypoint.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        waypoint.subtitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        waypoint.chapter.toString().includes(searchTerm) ||
+        waypoint.occupation.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        waypoint.location.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredWaypoints(filtered);
+    } else {
+      setFilteredWaypoints(waypoints);
+    }
+  }, [searchTerm, waypoints]);
+
   useEffect(() => {
     if (!mapContainer.current || waypoints.length === 0) return;
 
@@ -120,6 +136,13 @@ const Map = () => {
       bearing: 0,
       attributionControl: false
     });
+
+    // Apply cyberpunk styling to map container
+    if (isCyberpunkMode && mapContainer.current) {
+      mapContainer.current.classList.add('cyberpunk-map');
+    } else if (mapContainer.current) {
+      mapContainer.current.classList.remove('cyberpunk-map');
+    }
 
     // Add navigation controls
     map.current.addControl(
@@ -158,7 +181,7 @@ const Map = () => {
       );
     }
 
-    // Add waypoints
+    // Add waypoints and route
     map.current.on('load', () => {
       if (!map.current || waypoints.length === 0) return;
 
@@ -191,51 +214,105 @@ const Map = () => {
           'line-cap': 'round'
         },
         paint: {
-          'line-color': '#00ffff',
+          'line-color': isCyberpunkMode ? '#ff00ff' : '#00ffff',
           'line-width': 4,
           'line-opacity': 0.8
         }
       });
 
-      // Add waypoints
+      // Clear existing markers
+      markersRef.current.forEach(marker => marker.remove());
+      markersRef.current.clear();
+
+      // Add waypoints with drag functionality
       waypoints.forEach((waypoint, index) => {
         const el = document.createElement('div');
-        el.className = 'waypoint-marker';
+        el.className = `waypoint-marker ${editMode ? 'waypoint-edit-mode waypoint-draggable' : ''}`;
         el.style.cssText = `
           width: 32px;
           height: 32px;
           border-radius: 50%;
-          background: linear-gradient(135deg, #00ffff, #ff00ff);
+          background: linear-gradient(135deg, ${isCyberpunkMode ? '#ff00ff, #00ffff' : '#00ffff, #ff00ff'});
           border: 2px solid #ffffff;
-          cursor: pointer;
+          cursor: ${editMode ? 'grab' : 'pointer'};
           display: flex;
           align-items: center;
           justify-content: center;
           color: #000;
           font-weight: bold;
           font-size: 11px;
-          box-shadow: 0 0 20px #00ffff;
+          box-shadow: 0 0 20px ${isCyberpunkMode ? '#ff00ff' : '#00ffff'};
           position: relative;
+          z-index: ${editMode ? '1000' : '100'};
         `;
         el.textContent = String(waypoint.chapter);
-
-        // Add tooltip on hover
         el.title = `${waypoint.title} - ${waypoint.occupation}`;
 
-        el.addEventListener('click', () => {
-          setSelectedWaypoint(waypoint);
+        // Add click handler
+        el.addEventListener('click', (e) => {
+          if (!editMode) {
+            setSelectedWaypoint(waypoint);
+          }
+          e.stopPropagation();
         });
 
-        new maptilersdk.Marker(el)
+        // Create marker
+        const marker = new maptilersdk.Marker(el, { draggable: editMode })
           .setLngLat(waypoint.coordinates)
           .addTo(map.current!);
+
+        // Add drag event listeners for edit mode
+        if (editMode) {
+          marker.on('dragstart', () => {
+            setDraggedWaypoint(waypoint);
+            el.style.cursor = 'grabbing';
+          });
+
+          marker.on('dragend', () => {
+            const newCoords = marker.getLngLat();
+            const coordinates: [number, number] = [newCoords.lng, newCoords.lat];
+            saveWaypointPosition(waypoint.chapter, coordinates);
+            el.style.cursor = 'grab';
+            setDraggedWaypoint(null);
+            
+            // Update route
+            updateRoute();
+          });
+        }
+
+        markersRef.current.set(waypoint.chapter, marker);
       });
     });
 
     return () => {
+      if (mapContainer.current) {
+        mapContainer.current.classList.remove('cyberpunk-map');
+      }
       map.current?.remove();
     };
-  }, [mapStyle, waypoints]);
+  }, [mapStyle, waypoints, editMode, isCyberpunkMode]);
+
+  // Update route when waypoints change
+  const updateRoute = () => {
+    if (!map.current) return;
+    
+    const routeCoordinates = [
+      [BASE_COORDINATES.lng - 0.001, BASE_COORDINATES.lat - 0.001],
+      ...waypoints.map(w => w.coordinates),
+      [BASE_COORDINATES.lng + 0.001, BASE_COORDINATES.lat + 0.001]
+    ];
+
+    if (map.current.getSource('route')) {
+      (map.current.getSource('route') as any).setData({
+        type: 'Feature',
+        properties: {},
+        geometry: {
+          type: 'LineString',
+          coordinates: routeCoordinates
+        }
+      });
+    }
+  };
 
   const flyToWaypoint = (waypoint: any) => {
     map.current?.flyTo({
