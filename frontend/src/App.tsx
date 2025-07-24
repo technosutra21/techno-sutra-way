@@ -7,6 +7,7 @@ import Home from "./pages/Home";
 import Map from "./pages/Map";
 import Gallery from "./pages/Gallery";
 import RouteCreator from "./pages/RouteCreator";
+import ModelViewer from "./pages/ModelViewer";
 import Navigation from "./components/Navigation";
 import NotFound from "./pages/NotFound";
 
