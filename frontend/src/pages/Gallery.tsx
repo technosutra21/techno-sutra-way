@@ -42,7 +42,10 @@ const Gallery = () => {
   };
 
   const openModelViewer = (model: any) => {
-    setSelectedModel(model);
+    // Open the dedicated 3D model viewer with correct URL
+    const modelUrl = encodeURIComponent(model.modelUrl);
+    const title = encodeURIComponent(model.title);
+    window.open(`/model-viewer?url=${modelUrl}&title=${title}`, '_blank');
   };
 
   return (
