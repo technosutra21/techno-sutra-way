@@ -29,7 +29,7 @@ const Map = () => {
   const map = useRef<maptilersdk.Map | null>(null);
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [selectedWaypoint, setSelectedWaypoint] = useState<any>(null);
-  const [mapStyle, setMapStyle] = useState('dark');
+  const [mapStyle, setMapStyle] = useState('streets-v2');
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredWaypoints, setFilteredWaypoints] = useState(ORIGINAL_ROUTE.waypoints);
