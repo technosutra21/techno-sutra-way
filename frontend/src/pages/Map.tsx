@@ -381,20 +381,40 @@ const Map = () => {
         <Card className="cyberpunk-card p-4">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-primary text-glow font-bold">Techno Sutra</h3>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={toggleFullscreen}
-              className="text-primary hover:text-accent"
-            >
-              <Maximize className="w-4 h-4" />
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={toggleEditMode}
+                className={`${editMode ? 'text-yellow-400 bg-yellow-400/20' : 'text-muted-foreground'} hover:text-yellow-400 transition-colors`}
+                title={editMode ? 'Desativar modo de edição' : 'Ativar modo de edição'}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={toggleFullscreen}
+                className="text-primary hover:text-accent"
+              >
+                <Maximize className="w-4 h-4" />
+              </Button>
+            </div>
           </div>
-          <p className="text-sm text-muted-foreground mb-2">Rota Sagrada Original</p>
+          <p className="text-sm text-muted-foreground mb-2">
+            {editMode ? '🔧 Modo de Edição Ativo' : 'Rota Sagrada Original'}
+          </p>
           <div className="flex items-center gap-2 text-xs">
             <MapPin className="w-4 h-4 text-primary" />
             <span>Águas da Prata, SP</span>
           </div>
+          {editMode && (
+            <div className="mt-2 p-2 bg-yellow-400/10 border border-yellow-400/30 rounded text-xs text-yellow-200">
+              💡 Arraste os pontos no mapa para reposicioná-los na trilha correta
+            </div>
+          )}
         </Card>
 
         {/* Search Card */}
