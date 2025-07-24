@@ -83,7 +83,7 @@ const Map = () => {
   }, [searchTerm, waypoints]);
 
   useEffect(() => {
-    if (!mapContainer.current) return;
+    if (!mapContainer.current || waypoints.length === 0) return;
 
     setIsLoading(true);
 
@@ -93,7 +93,7 @@ const Map = () => {
     map.current = new maptilersdk.Map({
       container: mapContainer.current,
       style: mapStyle,
-      center: ORIGINAL_ROUTE.start as [number, number],
+      center: [BASE_COORDINATES.lng, BASE_COORDINATES.lat],
       zoom: 12,
       pitch: 45,
       bearing: 0,
@@ -139,7 +139,14 @@ const Map = () => {
 
     // Add waypoints
     map.current.on('load', () => {
-      if (!map.current) return;
+      if (!map.current || waypoints.length === 0) return;
+
+      // Calculate route coordinates
+      const routeCoordinates = [
+        [BASE_COORDINATES.lng - 0.001, BASE_COORDINATES.lat - 0.001], // Start point
+        ...waypoints.map(w => w.coordinates),
+        [BASE_COORDINATES.lng + 0.001, BASE_COORDINATES.lat + 0.001] // End point
+      ];
 
       // Add route line
       map.current.addSource('route', {
@@ -149,11 +156,7 @@ const Map = () => {
           properties: {},
           geometry: {
             type: 'LineString',
-            coordinates: [
-              ORIGINAL_ROUTE.start.reverse(),
-              ...ORIGINAL_ROUTE.waypoints.map(w => w.coordinates.reverse()),
-              ORIGINAL_ROUTE.end.reverse()
-            ]
+            coordinates: routeCoordinates
           }
         }
       });
@@ -174,12 +177,12 @@ const Map = () => {
       });
 
       // Add waypoints
-      ORIGINAL_ROUTE.waypoints.forEach((waypoint, index) => {
+      waypoints.forEach((waypoint, index) => {
         const el = document.createElement('div');
         el.className = 'waypoint-marker';
         el.style.cssText = `
-          width: 30px;
-          height: 30px;
+          width: 32px;
+          height: 32px;
           border-radius: 50%;
           background: linear-gradient(135deg, #00ffff, #ff00ff);
           border: 2px solid #ffffff;
@@ -189,10 +192,14 @@ const Map = () => {
           justify-content: center;
           color: #000;
           font-weight: bold;
-          font-size: 12px;
+          font-size: 11px;
           box-shadow: 0 0 20px #00ffff;
+          position: relative;
         `;
         el.textContent = String(waypoint.chapter);
+
+        // Add tooltip on hover
+        el.title = `${waypoint.title} - ${waypoint.occupation}`;
 
         el.addEventListener('click', () => {
           setSelectedWaypoint(waypoint);
@@ -207,7 +214,7 @@ const Map = () => {
     return () => {
       map.current?.remove();
     };
-  }, [mapStyle]);
+  }, [mapStyle, waypoints]);
 
   const flyToWaypoint = (waypoint: any) => {
     map.current?.flyTo({
