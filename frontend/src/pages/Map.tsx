@@ -73,21 +73,35 @@ const Map = () => {
     }
   }, [dataLoading, dataError]);
 
-  // Filter waypoints based on search
-  useEffect(() => {
-    if (searchTerm) {
-      const filtered = waypoints.filter(waypoint =>
-        waypoint.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        waypoint.subtitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        waypoint.chapter.toString().includes(searchTerm) ||
-        waypoint.occupation.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        waypoint.location.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      setFilteredWaypoints(filtered);
+  // Save waypoint positions
+  const saveWaypointPosition = (chapterId: number, coordinates: [number, number]) => {
+    const savedPositions = JSON.parse(localStorage.getItem('technosutra-waypoint-positions') || '{}');
+    savedPositions[chapterId] = coordinates;
+    localStorage.setItem('technosutra-waypoint-positions', JSON.stringify(savedPositions));
+    
+    // Update waypoints state
+    setWaypoints(prev => prev.map(w => 
+      w.chapter === chapterId ? { ...w, coordinates } : w
+    ));
+  };
+
+  // Toggle edit mode
+  const toggleEditMode = () => {
+    setEditMode(!editMode);
+    if (!editMode) {
+      // Entering edit mode
+      console.log('🔧 MODO DE EDIÇÃO ATIVADO - Arraste os pontos para reposicionar');
     } else {
-      setFilteredWaypoints(waypoints);
+      // Exiting edit mode
+      console.log('✅ MODO DE EDIÇÃO DESATIVADO - Posições salvas');
     }
-  }, [searchTerm, waypoints]);
+  };
+
+  // Map style handlers
+  const setMapStyleHandler = (style: string, cyberpunk: boolean = false) => {
+    setMapStyle(style);
+    setIsCyberpunkMode(cyberpunk);
+  };
 
   useEffect(() => {
     if (!mapContainer.current || waypoints.length === 0) return;
