@@ -12,8 +12,9 @@ import { CombinedSutraEntry } from '@/types/sutra';
 const Gallery = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRarity, setSelectedRarity] = useState<string>('all');
-  const [selectedModel, setSelectedModel] = useState<any>(null);
+  const [selectedModel, setSelectedModel] = useState<CombinedSutraEntry | null>(null);
   const [models, setModels] = useState<any[]>([]);
+  const [detailModalOpen, setDetailModalOpen] = useState(false);
   
   // Load CSV data
   const { getCombinedData, loading: dataLoading, error: dataError } = useSutraData();
