@@ -32,14 +32,17 @@ const Map = () => {
   // Load CSV data
   const { getCombinedData, loading: dataLoading, error: dataError } = useSutraData();
 
-  // Generate waypoints from CSV data
+  // Generate waypoints from CSV data with saved positions
   const generateWaypoints = () => {
     const sutraData = getCombinedData('pt');
     if (sutraData.length === 0) return [];
 
+    // Load saved positions from localStorage
+    const savedPositions = JSON.parse(localStorage.getItem('technosutra-waypoint-positions') || '{}');
+
     return sutraData.map((entry, index) => ({
       id: entry.chapter,
-      coordinates: [
+      coordinates: savedPositions[entry.chapter] || [
         BASE_COORDINATES.lng + (Math.random() - 0.5) * 0.012, // Spread over ~1.2km
         BASE_COORDINATES.lat + (Math.random() - 0.5) * 0.012
       ] as [number, number],
