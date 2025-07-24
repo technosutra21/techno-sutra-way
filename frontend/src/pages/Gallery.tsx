@@ -178,9 +178,25 @@ const Gallery = () => {
 
               {/* Content */}
               <div className="p-4">
-                <h3 className="font-bold text-primary mb-1">{model.title}</h3>
+                <div className="flex items-center gap-2 mb-2">
+                  <h3 className="font-bold text-primary flex-1">{model.title}</h3>
+                  <Badge variant="outline" className="text-xs">
+                    Cap. {model.chapter}
+                  </Badge>
+                </div>
+                
+                <div className="flex items-center gap-2 text-xs text-accent mb-2">
+                  <Book className="w-3 h-3" />
+                  <span>{model.occupation}</span>
+                </div>
+                
+                <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
+                  <MapPin className="w-3 h-3" />
+                  <span className="truncate">{model.location}</span>
+                </div>
+                
                 <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
-                  {model.description}
+                  <strong>Significado:</strong> {model.meaning}
                 </p>
                 
                 {/* Tags */}
