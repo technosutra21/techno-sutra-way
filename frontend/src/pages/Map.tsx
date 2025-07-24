@@ -6,22 +6,12 @@ import { Card } from '@/components/ui/card';
 import { MapPin, Navigation, Route, Users, Zap, Search, Maximize } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Input } from '@/components/ui/input';
+import { useSutraData } from '@/hooks/useSutraData';
 
-// Sample waypoints data (56 points for the journey)
-const ORIGINAL_ROUTE = {
-  start: [-21.9427, -46.7167], // Águas da Prata, SP
-  end: [-21.9527, -46.7267],
-  waypoints: Array.from({ length: 56 }, (_, i) => ({
-    id: i + 1,
-    coordinates: [
-      -46.7167 + (Math.random() - 0.5) * 0.01,
-      -21.9427 + (Math.random() - 0.5) * 0.01
-    ] as [number, number],
-    chapter: i + 1,
-    title: `Capítulo ${i + 1}`,
-    description: `Ponto de jornada do capítulo ${i + 1} do Sutra Stem Array - Explore este ponto sagrado da rota original com tecnologia cyberpunk avançada.`,
-    model: `https://technosutra21.github.io/technosutra/modelo${i + 1}.glb`
-  }))
+// Base coordinates for Águas da Prata, SP
+const BASE_COORDINATES = {
+  lat: -21.9427,
+  lng: -46.7167
 };
 
 const Map = () => {
