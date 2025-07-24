@@ -26,22 +26,23 @@ const RouteCreator = () => {
   const [customRoute, setCustomRoute] = useState<CustomRoute | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const mapContainer = useRef<HTMLDivElement>(null);
-  const map = useRef<mapboxgl.Map | null>(null);
+  const map = useRef<maptilersdk.Map | null>(null);
 
   useEffect(() => {
     if (!mapContainer.current) return;
 
-    mapboxgl.accessToken = 'pk.eyJ1IjoidGVjaG5vc3V0cmEiLCJhIjoiY2x4eHh4eHh4In0.dummy';
+    // Set MapTiler API key
+    maptilersdk.config.apiKey = 'rg7OAqXjLo7cLdwqlrVt';
     
-    map.current = new mapboxgl.Map({
+    map.current = new maptilersdk.Map({
       container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/dark-v11',
+      style: 'dark',
       center: [-46.7167, -21.9427],
       zoom: 2,
       attributionControl: false
     });
 
-    map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
+    map.current.addControl(new maptilersdk.NavigationControl(), 'top-right');
 
     return () => {
       map.current?.remove();
