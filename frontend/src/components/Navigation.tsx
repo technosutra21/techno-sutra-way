@@ -3,7 +3,6 @@ import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Home, Map, Users, Route, Menu } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { LanguageSwitcher, useLanguage } from '@/components/LanguageSwitcher';
 import {
   Sheet,
   SheetContent,
@@ -12,13 +11,12 @@ import {
 
 const Navigation = () => {
   const location = useLocation();
-  const { t } = useLanguage();
   
   const navItems = [
-    { path: '/', icon: Home, label: t('nav.home') },
-    { path: '/map', icon: Map, label: t('nav.map') },
-    { path: '/gallery', icon: Users, label: t('nav.gallery') },
-    { path: '/route-creator', icon: Route, label: t('nav.routeCreator') },
+    { path: '/', icon: Home, label: 'Início' },
+    { path: '/map', icon: Map, label: 'Mapa' },
+    { path: '/gallery', icon: Users, label: 'Galeria' },
+    { path: '/route-creator', icon: Route, label: 'Criar Rota' },
   ];
 
   const NavContent = ({ isMobile = false }: { isMobile?: boolean }) => (
