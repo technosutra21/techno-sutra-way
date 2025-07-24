@@ -169,13 +169,28 @@ const Gallery = () => {
                 
                 {/* Hover Actions */}
                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Button
-                    onClick={() => openModelViewer(model)}
-                    className="gradient-neon text-black font-bold"
-                  >
-                    <Eye className="w-4 h-4 mr-2" />
-                    Ver em 3D
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={() => openModelViewer(model)}
+                      className="gradient-neon text-black font-bold"
+                      size="sm"
+                    >
+                      <Eye className="w-4 h-4 mr-1" />
+                      3D
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        setSelectedModel(model);
+                        setDetailModalOpen(true);
+                      }}
+                      variant="outline"
+                      className="border-neon bg-background/80"
+                      size="sm"
+                    >
+                      <Info className="w-4 h-4 mr-1" />
+                      Info
+                    </Button>
+                  </div>
                 </div>
               </div>
 
