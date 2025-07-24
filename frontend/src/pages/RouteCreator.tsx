@@ -5,7 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { MapPin, Route, Zap, Download } from 'lucide-react';
 import { motion } from 'framer-motion';
-import mapboxgl from 'mapbox-gl';
+import * as maptilersdk from '@maptiler/sdk';
+import "@maptiler/sdk/dist/maptiler-sdk.css";
 
 interface CustomRoute {
   start: [number, number];
