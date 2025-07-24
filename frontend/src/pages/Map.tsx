@@ -465,7 +465,7 @@ const Map = () => {
             onClick={() => setMapStyleHandler('backdrop', true)}
           >
             <Zap className="w-4 h-4 mr-2" />
-            Modo Cyberpunk
+            Modo Cyberpunk {isCyberpunkMode ? '🔥' : ''}
           </Button>
           
           <Button 
@@ -490,6 +490,26 @@ const Map = () => {
           >
             <Route className="w-4 h-4 mr-2" />
             Modo Clássico
+          </Button>
+          
+          {/* Debug button - temporary */}
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="w-full text-xs text-yellow-400 border-yellow-400"
+            onClick={() => {
+              console.log('🔧 Debug - Estado atual:', { 
+                mapStyle, 
+                isCyberpunkMode, 
+                hasClass: mapContainer.current?.classList.contains('cyberpunk-map') 
+              });
+              // Force toggle cyberpunk
+              if (mapContainer.current) {
+                mapContainer.current.classList.toggle('cyberpunk-map');
+              }
+            }}
+          >
+            🔧 Debug Cyberpunk
           </Button>
         </div>
       </motion.div>
