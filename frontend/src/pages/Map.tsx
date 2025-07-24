@@ -190,7 +190,7 @@ const Map = () => {
             variant="outline" 
             size="sm" 
             className="w-full neon-glow"
-            onClick={() => setMapStyle('mapbox://styles/mapbox/dark-v11')}
+            onClick={() => setMapStyle('dark')}
           >
             <Navigation className="w-4 h-4 mr-2" />
             Modo Cyberpunk
@@ -200,7 +200,7 @@ const Map = () => {
             variant="outline" 
             size="sm" 
             className="w-full purple-glow"
-            onClick={() => setMapStyle('mapbox://styles/mapbox/satellite-v9')}
+            onClick={() => setMapStyle('satellite')}
           >
             <Route className="w-4 h-4 mr-2" />
             Satélite
