@@ -309,57 +309,97 @@ const Map = () => {
         </div>
       </motion.div>
 
-      {/* Waypoint Info Panel */}
-      {selectedWaypoint && (
-        <motion.div
-          initial={{ x: 100, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          exit={{ x: 100, opacity: 0 }}
-          className="absolute top-4 right-4 w-80 pointer-events-auto"
-        >
-          <Card className="cyberpunk-card p-6">
-            <div className="flex justify-between items-start mb-4">
-              <h3 className="text-primary text-glow font-bold text-lg">
-                {selectedWaypoint.title}
-              </h3>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setSelectedWaypoint(null)}
-                className="text-muted-foreground hover:text-primary"
-              >
-                ✕
-              </Button>
-            </div>
-            
-            <p className="text-muted-foreground mb-4">
-              {selectedWaypoint.description}
-            </p>
-            
-            <div className="space-y-3">
-              <Button
-                onClick={() => flyToWaypoint(selectedWaypoint)}
-                className="w-full gradient-neon text-black font-bold"
-              >
-                <Navigation className="w-4 h-4 mr-2" />
-                Voar para Local
-              </Button>
+      {/* Enhanced Waypoint Info Panel */}
+      <AnimatePresence>
+        {selectedWaypoint && (
+          <motion.div
+            initial={{ x: 100, opacity: 0, scale: 0.9 }}
+            animate={{ x: 0, opacity: 1, scale: 1 }}
+            exit={{ x: 100, opacity: 0, scale: 0.9 }}
+            transition={{ type: "spring", damping: 20, stiffness: 300 }}
+            className="absolute top-4 right-4 w-80 pointer-events-auto"
+          >
+            <Card className="cyberpunk-card p-6 relative overflow-hidden">
+              {/* Animated background effect */}
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 animate-pulse" />
               
-              <Button
-                variant="outline"
-                className="w-full border-neon"
-                onClick={() => {
-                  // Navigate to 3D model viewer
-                  window.open(`/model/${selectedWaypoint.id}`, '_blank');
-                }}
-              >
-                <Users className="w-4 h-4 mr-2" />
-                Ver Modelo 3D
-              </Button>
-            </div>
-          </Card>
-        </motion.div>
-      )}
+              <div className="relative z-10">
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <motion.h3 
+                      initial={{ y: -10, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      className="text-primary text-glow font-bold text-lg"
+                    >
+                      {selectedWaypoint.title}
+                    </motion.h3>
+                    <motion.div
+                      initial={{ y: 10, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      transition={{ delay: 0.1 }}
+                      className="flex items-center gap-2 text-xs text-accent mt-1"
+                    >
+                      <Zap className="w-3 h-3" />
+                      <span>Capítulo {selectedWaypoint.chapter}/56</span>
+                    </motion.div>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setSelectedWaypoint(null)}
+                    className="text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    ✕
+                  </Button>
+                </div>
+                
+                <motion.p 
+                  initial={{ y: 10, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.2 }}
+                  className="text-muted-foreground mb-4"
+                >
+                  {selectedWaypoint.description}
+                </motion.p>
+                
+                <div className="space-y-3">
+                  <motion.div
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.3 }}
+                  >
+                    <Button
+                      onClick={() => flyToWaypoint(selectedWaypoint)}
+                      className="w-full gradient-neon text-black font-bold hover:scale-105 transition-transform"
+                    >
+                      <Navigation className="w-4 h-4 mr-2" />
+                      Voar para Local
+                    </Button>
+                  </motion.div>
+                  
+                  <motion.div
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.4 }}
+                  >
+                    <Button
+                      variant="outline"
+                      className="w-full border-neon hover:scale-105 transition-transform"
+                      onClick={() => {
+                        // Navigate to 3D model viewer
+                        window.open(`/model/${selectedWaypoint.id}`, '_blank');
+                      }}
+                    >
+                      <Users className="w-4 h-4 mr-2" />
+                      Ver Modelo 3D
+                    </Button>
+                  </motion.div>
+                </div>
+              </div>
+            </Card>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Stats Panel */}
       <motion.div
