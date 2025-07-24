@@ -411,7 +411,16 @@ const Map = () => {
                   initial={{ y: 10, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.2 }}
-                  className="text-muted-foreground mb-4"
+                  className="text-muted-foreground mb-2 text-sm"
+                >
+                  <strong className="text-yellow-400">Significado:</strong> {selectedWaypoint.meaning}
+                </motion.p>
+                
+                <motion.p 
+                  initial={{ y: 10, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.25 }}
+                  className="text-muted-foreground mb-4 text-sm"
                 >
                   {selectedWaypoint.description}
                 </motion.p>
