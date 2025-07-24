@@ -205,7 +205,7 @@ const Home = () => {
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: 1, duration: 0.6 }}
-          className="text-center"
+          className="text-center mb-16"
         >
           <Card className="cyberpunk-card p-12 max-w-2xl mx-auto">
             <Sparkles className="w-16 h-16 text-primary mx-auto mb-6" />
@@ -224,6 +224,115 @@ const Home = () => {
                 Iniciar Peregrinação Sagrada
               </Link>
             </Button>
+          </Card>
+        </motion.div>
+
+        {/* Featured Characters */}
+        {randomCharacters.length > 0 && (
+          <motion.div
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 1.2, duration: 0.6 }}
+            className="mb-16"
+          >
+            <h2 className="text-3xl font-bold text-primary text-glow text-center mb-8">
+              Personagens Destacados
+            </h2>
+            <div className="grid md:grid-cols-3 gap-6">
+              {randomCharacters.map((character, index) => (
+                <motion.div
+                  key={character.chapter}
+                  initial={{ y: 50, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 1.4 + index * 0.1 }}
+                >
+                  <Card className="cyberpunk-card p-6 h-full group cursor-pointer">
+                    <Link to="/gallery" className="block h-full">
+                      <div className="text-center mb-4">
+                        <div className="inline-flex p-3 rounded-full bg-gradient-to-r from-primary/20 to-accent/20 mb-4 group-hover:scale-110 transition-transform">
+                          <Book className="w-6 h-6 text-primary" />
+                        </div>
+                        <h3 className="text-lg font-bold text-primary text-glow mb-2">
+                          {character.nome}
+                        </h3>
+                        <p className="text-sm text-accent mb-2">
+                          Capítulo {character.chapter} • {character.ocupacao}
+                        </p>
+                        <p className="text-xs text-muted-foreground mb-3">
+                          📍 {character.local}
+                        </p>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <div className="text-xs">
+                          <span className="text-yellow-400 font-bold">Significado:</span>
+                          <p className="text-muted-foreground line-clamp-2">
+                            {character.significado}
+                          </p>
+                        </div>
+                        
+                        <div className="text-xs">
+                          <span className="text-cyan-400 font-bold">Ensinamento:</span>
+                          <p className="text-muted-foreground line-clamp-3">
+                            {character.ensinamento.substring(0, 120)}...
+                          </p>
+                        </div>
+                      </div>
+                      
+                      <div className="mt-4">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="w-full text-primary hover:bg-primary/10"
+                        >
+                          Explorar Personagem →
+                        </Button>
+                      </div>
+                    </Link>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+
+        {/* Technical Features */}
+        <motion.div
+          initial={{ y: 50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 1.6, duration: 0.6 }}
+          className="text-center"
+        >
+          <Card className="cyberpunk-card p-8 max-w-4xl mx-auto">
+            <h2 className="text-2xl font-bold text-primary text-glow mb-6">
+              Tecnologia Avançada
+            </h2>
+            
+            <div className="grid md:grid-cols-3 gap-6">
+              <div className="text-center">
+                <Zap className="w-8 h-8 text-cyan-400 mx-auto mb-3" />
+                <h3 className="font-bold text-accent mb-2">Modo Cyberpunk</h3>
+                <p className="text-sm text-muted-foreground">
+                  Visualização com inversão de cores e efeitos neon para uma experiência imersiva
+                </p>
+              </div>
+              
+              <div className="text-center">
+                <Users className="w-8 h-8 text-purple-400 mx-auto mb-3" />
+                <h3 className="font-bold text-accent mb-2">Modelos 3D</h3>
+                <p className="text-sm text-muted-foreground">
+                  Personagens em alta qualidade com suporte a realidade aumentada
+                </p>
+              </div>
+              
+              <div className="text-center">
+                <MapPin className="w-8 h-8 text-yellow-400 mx-auto mb-3" />
+                <h3 className="font-bold text-accent mb-2">Edição Interativa</h3>
+                <p className="text-sm text-muted-foreground">
+                  Reposicione pontos da trilha com arrastar e soltar intuitivo
+                </p>
+              </div>
+            </div>
           </Card>
         </motion.div>
       </div>
