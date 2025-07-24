@@ -243,84 +243,15 @@ const Gallery = () => {
         ))}
       </div>
 
-      {/* Model Viewer Modal */}
-      {selectedModel && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50"
-          onClick={() => setSelectedModel(null)}
-        >
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="bg-card border border-border rounded-lg p-6 max-w-4xl w-full max-h-[90vh] overflow-auto"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex justify-between items-start mb-4">
-              <div>
-                <h2 className="text-2xl font-bold text-primary text-glow">
-                  {selectedModel.title}
-                </h2>
-                <p className="text-muted-foreground">Capítulo {selectedModel.chapter}</p>
-              </div>
-              <Button
-                variant="ghost"
-                onClick={() => setSelectedModel(null)}
-                className="text-muted-foreground hover:text-primary"
-              >
-                ✕
-              </Button>
-            </div>
-            
-            {/* 3D Model Viewer */}
-            <div className="aspect-video bg-secondary rounded-lg mb-4 flex items-center justify-center border-neon">
-              <model-viewer
-                src={selectedModel.modelUrl}
-                alt={selectedModel.title}
-                auto-rotate
-                camera-controls
-                ar
-                ar-modes="webxr scene-viewer quick-look"
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  backgroundColor: 'transparent'
-                }}
-              />
-            </div>
-            
-            <p className="text-muted-foreground mb-4">
-              {selectedModel.description}
-            </p>
-            
-            <div className="flex gap-3">
-              <Button 
-                className="gradient-neon text-black font-bold"
-                onClick={() => openModelViewer(selectedModel)}
-              >
-                <Eye className="w-4 h-4 mr-2" />
-                Abrir Visualizador 3D
-              </Button>
-              <Button 
-                variant="outline" 
-                className="border-neon"
-                onClick={() => {
-                  const link = document.createElement('a');
-                  link.href = selectedModel.modelUrl;
-                  link.download = `technosutra_${selectedModel.title.replace(/\s+/g, '_')}.glb`;
-                  document.body.appendChild(link);
-                  link.click();
-                  document.body.removeChild(link);
-                }}
-              >
-                <Download className="w-4 h-4 mr-2" />
-                Download GLB
-              </Button>
-            </div>
-          </motion.div>
-        </motion.div>
-      )}
+      {/* Character Detail Modal */}
+      <CharacterDetailModal
+        character={selectedModel}
+        isOpen={detailModalOpen}
+        onClose={() => {
+          setDetailModalOpen(false);
+          setSelectedModel(null);
+        }}
+      />
     </div>
   );
 };
