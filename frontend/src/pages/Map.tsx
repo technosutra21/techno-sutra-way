@@ -19,8 +19,8 @@ const ORIGINAL_ROUTE = {
     ] as [number, number],
     chapter: i + 1,
     title: `Capítulo ${i + 1}`,
-    description: `Ponto de jornada do capítulo ${i + 1} do Sutra Stem Array`,
-    model: `https://cdn.statically.io/gh/technosutra21/technosutra/master/modelo${i + 1}.glb`
+    description: `Ponto de jornada do capítulo ${i + 1} do Sutra Stem Array - Explore este ponto sagrado da rota original com tecnologia cyberpunk avançada.`,
+    model: `https://technosutra21.github.io/technosutra/modelo${i + 1}.glb`
   }))
 };
 
