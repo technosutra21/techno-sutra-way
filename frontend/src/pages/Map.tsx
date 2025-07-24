@@ -676,7 +676,23 @@ const Map = () => {
               </div>
               <div className="text-muted-foreground">Localizado</div>
             </motion.div>
+            {editMode && (
+              <motion.div 
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                whileHover={{ scale: 1.1 }}
+                className="text-center cursor-pointer"
+              >
+                <div className="text-yellow-400 text-glow font-bold text-xl">✏️</div>
+                <div className="text-muted-foreground">Editando</div>
+              </motion.div>
+            )}
           </div>
+          {editMode && (
+            <div className="mt-2 text-xs text-yellow-400 text-center">
+              Posições sendo salvas automaticamente
+            </div>
+          )}
         </Card>
       </motion.div>
     </div>
