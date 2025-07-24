@@ -300,4 +300,93 @@ All colors MUST be HSL for maximum compatibility.
   .custom-waypoint-marker:hover {
     transform: scale(1.2);
   }
+
+  /* Cyberpunk Map Style - Inverted Colors with Neon Effects */
+  .cyberpunk-map {
+    filter: invert(1) hue-rotate(180deg) saturate(2) contrast(1.2) brightness(1.1);
+    position: relative;
+  }
+
+  .cyberpunk-map::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 20% 30%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba(255, 0, 255, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 40% 80%, rgba(0, 255, 0, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+    mix-blend-mode: screen;
+    z-index: 1;
+  }
+
+  /* Enhanced cyberpunk overlay for better neon effect */
+  .cyberpunk-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      linear-gradient(45deg, transparent 49%, rgba(0, 255, 255, 0.02) 50%, transparent 51%),
+      linear-gradient(-45deg, transparent 49%, rgba(255, 0, 255, 0.02) 50%, transparent 51%);
+    background-size: 20px 20px;
+    pointer-events: none;
+    z-index: 2;
+    animation: cyberpunkScan 10s linear infinite;
+  }
+
+  @keyframes cyberpunkScan {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  /* Draggable waypoint styles */
+  .waypoint-draggable {
+    cursor: grab;
+    transform: scale(1.1);
+    box-shadow: 0 0 30px currentColor;
+    z-index: 1000;
+  }
+
+  .waypoint-draggable:active {
+    cursor: grabbing;
+    transform: scale(1.2);
+  }
+
+  .waypoint-edit-mode {
+    border: 3px solid #ffff00;
+    animation: editPulse 2s ease-in-out infinite;
+  }
+
+  @keyframes editPulse {
+    0%, 100% { 
+      box-shadow: 0 0 20px #ffff00; 
+    }
+    50% { 
+      box-shadow: 0 0 40px #ffff00, 0 0 60px #ffff00; 
+    }
+  }
+
+  /* Edit mode overlay */
+  .edit-mode-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 0, 0.05);
+    border: 2px dashed rgba(255, 255, 0, 0.3);
+    pointer-events: none;
+    z-index: 10;
+    animation: editModeGlow 3s ease-in-out infinite;
+  }
+
+  @keyframes editModeGlow {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
+  }
 }
