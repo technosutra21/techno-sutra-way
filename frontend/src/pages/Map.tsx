@@ -233,7 +233,7 @@ const Map = () => {
     <div className={`${isFullscreen ? 'fixed inset-0 z-50' : 'h-screen'} relative overflow-hidden bg-background`}>
       {/* Loading Screen */}
       <AnimatePresence>
-        {isLoading && (
+        {(isLoading || dataLoading) && (
           <motion.div
             initial={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -250,8 +250,13 @@ const Map = () => {
                 transition={{ duration: 2, repeat: Infinity }}
                 className="text-xl font-bold text-primary text-glow"
               >
-                Iniciando Sistema Techno Sutra...
+                {dataLoading ? 'Carregando dados do Sutra...' : 'Iniciando Sistema Techno Sutra...'}
               </motion.h2>
+              {dataError && (
+                <p className="text-destructive text-sm mt-2">
+                  Erro ao carregar dados: {dataError}
+                </p>
+              )}
             </div>
           </motion.div>
         )}
