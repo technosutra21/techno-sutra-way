@@ -7,28 +7,57 @@ import { Search, Eye, Download, Star, Book, MapPin } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useSutraData } from '@/hooks/useSutraData';
 
-// Generate 56 models data
-const MODELS = Array.from({ length: 56 }, (_, i) => ({
-  id: i + 1,
-  title: `Capítulo ${i + 1}`,
-  description: `Personagem místico do capítulo ${i + 1} do Sutra Stem Array - Explore este modelo 3D sagrado da jornada cyberpunk.`,
-  chapter: i + 1,
-  modelUrl: `https://technosutra21.github.io/technosutra/modelo${i + 1}.glb`,
-  thumbnailUrl: `https://via.placeholder.com/300x200/000011/00ffff?text=Capítulo+${i + 1}`,
-  tags: ['Budista', 'Místico', '3D', 'Cyberpunk'],
-  rarity: i % 7 === 0 ? 'legendary' : i % 3 === 0 ? 'epic' : 'common',
-  downloads: Math.floor(Math.random() * 10000),
-  rating: (4 + Math.random()).toFixed(1)
-}));
-
 const Gallery = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRarity, setSelectedRarity] = useState<string>('all');
   const [selectedModel, setSelectedModel] = useState<any>(null);
+  const [models, setModels] = useState<any[]>([]);
+  
+  // Load CSV data
+  const { getCombinedData, loading: dataLoading, error: dataError } = useSutraData();
 
-  const filteredModels = MODELS.filter(model => {
+  // Generate models from CSV data
+  useEffect(() => {
+    if (!dataLoading && !dataError) {
+      const sutraData = getCombinedData('pt');
+      const generatedModels = sutraData.map((entry, index) => ({
+        id: entry.chapter,
+        title: entry.nome,
+        subtitle: `Capítulo ${entry.chapter}`,
+        description: entry.descPersonagem || entry.ensinamento.substring(0, 150) + '...',
+        fullDescription: entry.descPersonagem,
+        teaching: entry.ensinamento,
+        chapter: entry.chapter,
+        modelUrl: entry.linkModel,
+        thumbnailUrl: `https://via.placeholder.com/300x200/000011/00ffff?text=${encodeURIComponent(entry.nome.substring(0, 15))}`,
+        tags: [
+          entry.ocupacao || 'Místico', 
+          'Budista', 
+          '3D', 
+          'Cyberpunk',
+          entry.local ? 'Localizado' : 'Espiritual'
+        ].filter(Boolean),
+        rarity: entry.chapter % 7 === 0 ? 'legendary' : entry.chapter % 3 === 0 ? 'epic' : 'common',
+        downloads: Math.floor(Math.random() * 10000) + entry.chapter * 100,
+        rating: (4 + Math.random()).toFixed(1),
+        occupation: entry.ocupacao,
+        meaning: entry.significado,
+        location: entry.local,
+        chapterSummary: entry.resumoCap,
+        capUrl: entry.capUrl,
+        qrCodeUrl: entry.qrCodeUrl
+      }));
+      
+      setModels(generatedModels);
+    }
+  }, [dataLoading, dataError]);
+
+  const filteredModels = models.filter(model => {
     const matchesSearch = model.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         model.description.toLowerCase().includes(searchTerm.toLowerCase());
+                         model.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         model.occupation.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         model.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         model.chapter.toString().includes(searchTerm);
     const matchesRarity = selectedRarity === 'all' || model.rarity === selectedRarity;
     
     return matchesSearch && matchesRarity;
