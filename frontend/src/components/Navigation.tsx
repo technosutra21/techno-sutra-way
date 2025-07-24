@@ -60,7 +60,6 @@ const Navigation = () => {
             
             <div className="flex items-center gap-4">
               <NavContent />
-              <LanguageSwitcher />
             </div>
           </div>
         </div>
