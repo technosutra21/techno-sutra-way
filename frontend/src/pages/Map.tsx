@@ -330,17 +330,17 @@ const Map = () => {
             onClick={() => setMapStyle('backdrop')}
           >
             <Navigation className="w-4 h-4 mr-2" />
-            Modo Cyberpunk
+            Modo Sombras
           </Button>
           
           <Button 
             variant="outline" 
             size="sm" 
             className="w-full purple-glow transition-all duration-300 hover:scale-105"
-            onClick={() => setMapStyle('satellite')}
+            onClick={() => setMapStyle('dataviz')}
           >
             <Route className="w-4 h-4 mr-2" />
-            Satélite
+            Modo Cyberpunk
           </Button>
 
           <Button 
