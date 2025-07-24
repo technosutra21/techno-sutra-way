@@ -137,13 +137,6 @@ const Map = () => {
       attributionControl: false
     });
 
-    // Apply cyberpunk styling to map container
-    if (isCyberpunkMode && mapContainer.current) {
-      mapContainer.current.classList.add('cyberpunk-map');
-    } else if (mapContainer.current) {
-      mapContainer.current.classList.remove('cyberpunk-map');
-    }
-
     // Add navigation controls
     map.current.addControl(
       new maptilersdk.NavigationControl({
@@ -155,6 +148,15 @@ const Map = () => {
     // Map loaded event
     map.current.on('load', () => {
       setIsLoading(false);
+      
+      // Apply cyberpunk styling after map loads
+      if (isCyberpunkMode && mapContainer.current) {
+        setTimeout(() => {
+          mapContainer.current!.classList.add('cyberpunk-map');
+        }, 500);
+      } else if (mapContainer.current) {
+        mapContainer.current.classList.remove('cyberpunk-map');
+      }
     });
 
     // Get user location
