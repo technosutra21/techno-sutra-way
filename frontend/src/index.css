@@ -164,15 +164,15 @@ All colors MUST be HSL for maximum compatibility.
     transform: translateY(-2px);
   }
 
-  /* Map styles */
-  .mapboxgl-popup-content {
+  /* Map styles - MapTiler */
+  .maptilersdk-popup-content {
     background: hsl(var(--card)) !important;
     border: 1px solid hsl(var(--border)) !important;
     border-radius: var(--radius) !important;
     color: hsl(var(--foreground)) !important;
   }
 
-  .mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip {
+  .maptilersdk-popup-anchor-bottom .maptilersdk-popup-tip {
     border-top-color: hsl(var(--card)) !important;
   }
 }
