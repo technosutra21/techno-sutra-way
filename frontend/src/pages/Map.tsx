@@ -22,21 +22,65 @@ const Map = () => {
   const [mapStyle, setMapStyle] = useState('streets-v2');
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filteredWaypoints, setFilteredWaypoints] = useState(ORIGINAL_ROUTE.waypoints);
+  const [filteredWaypoints, setFilteredWaypoints] = useState<any[]>([]);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  
+  // Load CSV data
+  const { getCombinedData, loading: dataLoading, error: dataError } = useSutraData();
+
+  // Generate waypoints from CSV data
+  const generateWaypoints = () => {
+    const sutraData = getCombinedData('pt');
+    if (sutraData.length === 0) return [];
+
+    return sutraData.map((entry, index) => ({
+      id: entry.chapter,
+      coordinates: [
+        BASE_COORDINATES.lng + (Math.random() - 0.5) * 0.012, // Spread over ~1.2km
+        BASE_COORDINATES.lat + (Math.random() - 0.5) * 0.012
+      ] as [number, number],
+      chapter: entry.chapter,
+      title: `${entry.nome}`,
+      subtitle: `Capítulo ${entry.chapter}`,
+      description: entry.descPersonagem || entry.ensinamento.substring(0, 200) + '...',
+      fullDescription: entry.descPersonagem,
+      teaching: entry.ensinamento,
+      occupation: entry.ocupacao,
+      meaning: entry.significado,
+      location: entry.local,
+      chapterSummary: entry.resumoCap,
+      model: entry.linkModel,
+      capUrl: entry.capUrl,
+      qrCodeUrl: entry.qrCodeUrl
+    }));
+  };
+
+  const [waypoints, setWaypoints] = useState<any[]>([]);
+
+  // Update waypoints when data loads
+  useEffect(() => {
+    if (!dataLoading && !dataError) {
+      const newWaypoints = generateWaypoints();
+      setWaypoints(newWaypoints);
+      setFilteredWaypoints(newWaypoints);
+    }
+  }, [dataLoading, dataError]);
 
   // Filter waypoints based on search
   useEffect(() => {
     if (searchTerm) {
-      const filtered = ORIGINAL_ROUTE.waypoints.filter(waypoint =>
+      const filtered = waypoints.filter(waypoint =>
         waypoint.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        waypoint.chapter.toString().includes(searchTerm)
+        waypoint.subtitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        waypoint.chapter.toString().includes(searchTerm) ||
+        waypoint.occupation.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        waypoint.location.toLowerCase().includes(searchTerm.toLowerCase())
       );
       setFilteredWaypoints(filtered);
     } else {
-      setFilteredWaypoints(ORIGINAL_ROUTE.waypoints);
+      setFilteredWaypoints(waypoints);
     }
-  }, [searchTerm]);
+  }, [searchTerm, waypoints]);
 
   useEffect(() => {
     if (!mapContainer.current) return;
