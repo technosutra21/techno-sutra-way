@@ -189,14 +189,42 @@ const Map = () => {
   };
 
   return (
-    <div className="h-screen relative overflow-hidden bg-background">
+    <div className={`${isFullscreen ? 'fixed inset-0 z-50' : 'h-screen'} relative overflow-hidden bg-background`}>
+      {/* Loading Screen */}
+      <AnimatePresence>
+        {isLoading && (
+          <motion.div
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 z-50 bg-background flex items-center justify-center"
+          >
+            <div className="text-center">
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"
+              />
+              <motion.h2
+                animate={{ opacity: [0.5, 1, 0.5] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="text-xl font-bold text-primary text-glow"
+              >
+                Iniciando Sistema Techno Sutra...
+              </motion.h2>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Map Container */}
       <div ref={mapContainer} className="absolute inset-0" />
       
-      {/* Cyberpunk Overlay */}
+      {/* Enhanced Cyberpunk Overlay */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-background/20 to-transparent" />
-        <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-background/20 to-transparent" />
+        <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-background/30 to-transparent" />
+        <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-background/30 to-transparent" />
+        <div className="absolute top-0 left-0 w-32 h-full bg-gradient-to-r from-background/20 to-transparent" />
+        <div className="absolute top-0 right-0 w-32 h-full bg-gradient-to-l from-background/20 to-transparent" />
       </div>
 
       {/* Controls */}
