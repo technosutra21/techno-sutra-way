@@ -151,10 +151,13 @@ const Map = () => {
       
       // Apply cyberpunk styling after map loads
       if (isCyberpunkMode && mapContainer.current) {
+        console.log('🎨 Aplicando modo cyberpunk...');
         setTimeout(() => {
           mapContainer.current!.classList.add('cyberpunk-map');
-        }, 500);
+          console.log('✅ Modo cyberpunk aplicado!');
+        }, 1000);
       } else if (mapContainer.current) {
+        console.log('🔄 Removendo modo cyberpunk...');
         mapContainer.current.classList.remove('cyberpunk-map');
       }
     });
