@@ -60,7 +60,10 @@ const Navigation = () => {
               <span className="text-xl font-bold text-primary text-glow">Techno Sutra</span>
             </Link>
             
-            <NavContent />
+            <div className="flex items-center gap-4">
+              <NavContent />
+              <LanguageSwitcher />
+            </div>
           </div>
         </div>
       </motion.nav>
