@@ -281,7 +281,7 @@ const Map = () => {
             variant="outline" 
             size="sm" 
             className="w-full neon-glow transition-all duration-300 hover:scale-105"
-            onClick={() => setMapStyle('dark')}
+            onClick={() => setMapStyle('backdrop')}
           >
             <Navigation className="w-4 h-4 mr-2" />
             Modo Cyberpunk
@@ -301,7 +301,7 @@ const Map = () => {
             variant="outline" 
             size="sm" 
             className="w-full gradient-neon text-black font-bold transition-all duration-300 hover:scale-105"
-            onClick={() => setMapStyle('streets')}
+            onClick={() => setMapStyle('streets-v2')}
           >
             <Zap className="w-4 h-4 mr-2" />
             Neural Network
