@@ -87,11 +87,21 @@ const Gallery = () => {
         className="mb-8"
       >
         <h1 className="text-4xl font-bold text-primary text-glow mb-2">
-          Galeria de Modelos 3D
+          Galeria de Personagens 3D
         </h1>
         <p className="text-muted-foreground">
-          Explore os 56 personagens místicos do Sutra Stem Array
+          Explore os {models.length} personagens místicos do Sutra Stem Array
         </p>
+        {dataLoading && (
+          <p className="text-accent text-sm mt-2">
+            Carregando dados do Sutra...
+          </p>
+        )}
+        {dataError && (
+          <p className="text-destructive text-sm mt-2">
+            Erro ao carregar dados: {dataError}
+          </p>
+        )}
       </motion.div>
 
       {/* Search and Filters */}
