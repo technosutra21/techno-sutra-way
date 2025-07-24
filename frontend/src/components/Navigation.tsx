@@ -74,7 +74,6 @@ const Navigation = () => {
           </Link>
           
           <div className="flex items-center gap-2">
-            <LanguageSwitcher />
             <Sheet>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="sm">
