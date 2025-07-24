@@ -3,9 +3,11 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Search, Eye, Download, Star, Book, MapPin } from 'lucide-react';
+import { Search, Eye, Download, Star, Book, MapPin, Info } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useSutraData } from '@/hooks/useSutraData';
+import { CharacterDetailModal } from '@/components/CharacterDetailModal';
+import { CombinedSutraEntry } from '@/types/sutra';
 
 const Gallery = () => {
   const [searchTerm, setSearchTerm] = useState('');
