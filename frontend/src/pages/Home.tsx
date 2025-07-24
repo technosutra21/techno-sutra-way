@@ -1,11 +1,26 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { MapPin, Users, Route, Sparkles, Eye, Navigation } from 'lucide-react';
+import { MapPin, Users, Route, Sparkles, Eye, Navigation, Zap, Book } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useSutraData } from '@/hooks/useSutraData';
 
 const Home = () => {
+  const { getCombinedData, loading: dataLoading } = useSutraData();
+  const [randomCharacters, setRandomCharacters] = useState<any[]>([]);
+
+  // Get random characters for showcase
+  useEffect(() => {
+    if (!dataLoading) {
+      const allData = getCombinedData('pt');
+      if (allData.length > 0) {
+        // Get 3 random characters
+        const shuffled = [...allData].sort(() => 0.5 - Math.random());
+        setRandomCharacters(shuffled.slice(0, 3));
+      }
+    }
+  }, [dataLoading]);
   const features = [
     {
       icon: MapPin,
