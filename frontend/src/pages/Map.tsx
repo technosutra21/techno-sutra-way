@@ -401,24 +401,39 @@ const Map = () => {
         )}
       </AnimatePresence>
 
-      {/* Stats Panel */}
+      {/* Enhanced Stats Panel */}
       <motion.div
         initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         className="absolute bottom-4 left-4 pointer-events-auto"
       >
         <Card className="cyberpunk-card p-4">
-          <div className="flex items-center gap-4 text-sm">
-            <div className="text-center">
-              <div className="text-primary text-glow font-bold">56</div>
+          <div className="flex items-center gap-6 text-sm">
+            <motion.div 
+              whileHover={{ scale: 1.1 }}
+              className="text-center cursor-pointer"
+            >
+              <div className="text-primary text-glow font-bold text-xl">56</div>
               <div className="text-muted-foreground">Pontos</div>
-            </div>
-            <div className="text-center">
-              <div className="text-accent text-glow font-bold">
+            </motion.div>
+            <motion.div 
+              whileHover={{ scale: 1.1 }}
+              className="text-center cursor-pointer"
+            >
+              <div className="text-accent text-glow font-bold text-xl">
+                {filteredWaypoints.length}
+              </div>
+              <div className="text-muted-foreground">Filtrados</div>
+            </motion.div>
+            <motion.div 
+              whileHover={{ scale: 1.1 }}
+              className="text-center cursor-pointer"
+            >
+              <div className="text-cyan-400 text-glow font-bold text-xl">
                 {userLocation ? '1' : '0'}
               </div>
               <div className="text-muted-foreground">Localizado</div>
-            </div>
+            </motion.div>
           </div>
         </Card>
       </motion.div>
