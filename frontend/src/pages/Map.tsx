@@ -227,26 +227,60 @@ const Map = () => {
         <div className="absolute top-0 right-0 w-32 h-full bg-gradient-to-l from-background/20 to-transparent" />
       </div>
 
-      {/* Controls */}
+      {/* Enhanced Controls */}
       <motion.div 
         initial={{ x: -100, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
-        className="absolute top-4 left-4 space-y-3 pointer-events-auto"
+        className="absolute top-4 left-4 space-y-3 pointer-events-auto max-w-xs"
       >
+        {/* Main Info Card */}
         <Card className="cyberpunk-card p-4">
-          <h3 className="text-primary text-glow font-bold mb-2">Techno Sutra</h3>
-          <p className="text-sm text-muted-foreground">Rota Sagrada Original</p>
-          <div className="flex items-center gap-2 mt-2 text-xs">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-primary text-glow font-bold">Techno Sutra</h3>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={toggleFullscreen}
+              className="text-primary hover:text-accent"
+            >
+              <Maximize className="w-4 h-4" />
+            </Button>
+          </div>
+          <p className="text-sm text-muted-foreground mb-2">Rota Sagrada Original</p>
+          <div className="flex items-center gap-2 text-xs">
             <MapPin className="w-4 h-4 text-primary" />
             <span>Águas da Prata, SP</span>
           </div>
         </Card>
 
+        {/* Search Card */}
+        <Card className="cyberpunk-card p-3">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              placeholder="Buscar capítulo..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 bg-muted/20 border-border text-foreground"
+            />
+          </div>
+          {searchTerm && (
+            <motion.p
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-xs text-muted-foreground mt-2"
+            >
+              {filteredWaypoints.length} pontos encontrados
+            </motion.p>
+          )}
+        </Card>
+
+        {/* Style Controls */}
         <div className="space-y-2">
           <Button 
             variant="outline" 
             size="sm" 
-            className="w-full neon-glow"
+            className="w-full neon-glow transition-all duration-300 hover:scale-105"
             onClick={() => setMapStyle('dark')}
           >
             <Navigation className="w-4 h-4 mr-2" />
@@ -256,11 +290,21 @@ const Map = () => {
           <Button 
             variant="outline" 
             size="sm" 
-            className="w-full purple-glow"
+            className="w-full purple-glow transition-all duration-300 hover:scale-105"
             onClick={() => setMapStyle('satellite')}
           >
             <Route className="w-4 h-4 mr-2" />
             Satélite
+          </Button>
+
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="w-full gradient-neon text-black font-bold transition-all duration-300 hover:scale-105"
+            onClick={() => setMapStyle('streets')}
+          >
+            <Zap className="w-4 h-4 mr-2" />
+            Neural Network
           </Button>
         </div>
       </motion.div>
