@@ -3,7 +3,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { MapPin, Route, Zap, Download, Play, Trash2, Save } from 'lucide-react';
+import { MapPin, Route, Zap, Download, Play, Trash2, Save, Search, Navigation } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import * as maptilersdk from '@maptiler/sdk';
 import "@maptiler/sdk/dist/maptiler-sdk.css";
@@ -24,12 +24,15 @@ interface CustomRoute {
 }
 
 const RouteCreator = () => {
-  const [routeName, setRouteName] = useState('Nova Rota Cyberpunk');
+  const [routeName, setRouteName] = useState('');
+  const [startSearch, setStartSearch] = useState('');
+  const [endSearch, setEndSearch] = useState('');
   const [isCreating, setIsCreating] = useState(false);
   const [currentRoute, setCurrentRoute] = useState<CustomRoute | null>(null);
   const [waypoints, setWaypoints] = useState<CustomWaypoint[]>([]);
   const [savedRoutes, setSavedRoutes] = useState<CustomRoute[]>([]);
   const [selectedTool, setSelectedTool] = useState<'start' | 'end' | 'waypoint'>('start');
+  const [showInstructions, setShowInstructions] = useState(false);
   
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<maptilersdk.Map | null>(null);
@@ -51,46 +54,104 @@ const RouteCreator = () => {
 
     map.current.addControl(new maptilersdk.NavigationControl(), 'top-right');
 
-    // Add click handler for adding waypoints
-    map.current.on('click', handleMapClick);
-
     // Load saved routes from localStorage
     const saved = localStorage.getItem('technosutra-routes');
     if (saved) {
       setSavedRoutes(JSON.parse(saved));
     }
 
+    // Map loaded event
+    map.current.on('load', () => {
+      console.log('Map loaded successfully');
+    });
+
     return () => {
       map.current?.remove();
     };
   }, []);
 
-  const handleMapClick = (e: any) => {
-    if (!isCreating) return;
+  // Add click handler when creating mode is active
+  useEffect(() => {
+    if (!map.current) return;
 
-    const coordinates: [number, number] = [e.lngLat.lng, e.lngLat.lat];
-    const newWaypoint: CustomWaypoint = {
-      id: `${selectedTool}-${Date.now()}`,
-      coordinates,
-      name: getWaypointName(selectedTool, waypoints.length),
-      type: selectedTool
+    const handleMapClick = (e: any) => {
+      if (!isCreating) return;
+
+      console.log('Map clicked!', e.lngLat);
+      
+      const coordinates: [number, number] = [e.lngLat.lng, e.lngLat.lat];
+      const newWaypoint: CustomWaypoint = {
+        id: `${selectedTool}-${Date.now()}`,
+        coordinates,
+        name: getWaypointName(selectedTool, waypoints.length),
+        type: selectedTool
+      };
+
+      // Remove existing start/end if adding new one
+      let updatedWaypoints = waypoints;
+      if (selectedTool === 'start' || selectedTool === 'end') {
+        updatedWaypoints = waypoints.filter(w => w.type !== selectedTool);
+      }
+
+      const finalWaypoints = [...updatedWaypoints, newWaypoint];
+      setWaypoints(finalWaypoints);
+      updateMapVisualization(finalWaypoints);
+      
+      // Auto-advance tool selection
+      if (selectedTool === 'start') {
+        setSelectedTool('end');
+      } else if (selectedTool === 'end') {
+        setSelectedTool('waypoint');
+      }
     };
 
-    // Remove existing start/end if adding new one
-    let updatedWaypoints = waypoints;
-    if (selectedTool === 'start' || selectedTool === 'end') {
-      updatedWaypoints = waypoints.filter(w => w.type !== selectedTool);
-    }
+    map.current.on('click', handleMapClick);
 
-    const finalWaypoints = [...updatedWaypoints, newWaypoint];
-    setWaypoints(finalWaypoints);
-    updateMapVisualization(finalWaypoints);
+    return () => {
+      if (map.current) {
+        map.current.off('click', handleMapClick);
+      }
+    };
+  }, [isCreating, selectedTool, waypoints]);
+
+  // Geocoding function using MapTiler Geocoding API
+  const geocodeLocation = async (query: string): Promise<[number, number] | null> => {
+    if (!query.trim()) return null;
     
-    // Auto-advance tool selection
-    if (selectedTool === 'start') {
-      setSelectedTool('end');
-    } else if (selectedTool === 'end') {
-      setSelectedTool('waypoint');
+    try {
+      const response = await fetch(
+        `https://api.maptiler.com/geocoding/${encodeURIComponent(query)}.json?key=rg7OAqXjLo7cLdwqlrVt&limit=1`
+      );
+      const data = await response.json();
+      
+      if (data.features && data.features.length > 0) {
+        const [lng, lat] = data.features[0].center;
+        return [lng, lat];
+      }
+      return null;
+    } catch (error) {
+      console.error('Geocoding error:', error);
+      return null;
+    }
+  };
+
+  const searchAndFlyTo = async (query: string, type: 'start' | 'end') => {
+    const coords = await geocodeLocation(query);
+    if (coords && map.current) {
+      map.current.flyTo({
+        center: coords,
+        zoom: 14,
+        duration: 2000
+      });
+      
+      // If we're in creating mode, automatically set the tool to the searched type
+      if (isCreating) {
+        setSelectedTool(type);
+        setShowInstructions(true);
+        setTimeout(() => setShowInstructions(false), 5000);
+      }
+    } else {
+      alert('Local não encontrado. Tente termos como "São Paulo", "Rio de Janeiro", etc.');
     }
   };
 
@@ -98,7 +159,7 @@ const RouteCreator = () => {
     switch (type) {
       case 'start': return 'Ponto de Partida';
       case 'end': return 'Destino Final';
-      default: return `Ponto Intermediário ${count}`;
+      default: return `Ponto ${count}`;
     }
   };
 
@@ -124,6 +185,7 @@ const RouteCreator = () => {
         cursor: pointer;
         box-shadow: 0 0 20px ${color};
         position: relative;
+        z-index: 1000;
       `;
 
       // Add label
@@ -131,16 +193,17 @@ const RouteCreator = () => {
       label.textContent = waypoint.name;
       label.style.cssText = `
         position: absolute;
-        top: -30px;
+        top: -35px;
         left: 50%;
         transform: translateX(-50%);
-        background: rgba(0,0,0,0.8);
+        background: rgba(0,0,0,0.9);
         color: white;
-        padding: 2px 6px;
+        padding: 4px 8px;
         border-radius: 4px;
-        font-size: 10px;
+        font-size: 11px;
         white-space: nowrap;
         pointer-events: none;
+        border: 1px solid ${color};
       `;
       el.appendChild(label);
 
@@ -224,6 +287,7 @@ const RouteCreator = () => {
     setIsCreating(true);
     setWaypoints([]);
     setSelectedTool('start');
+    setRouteName(`Nova Rota ${new Date().toLocaleDateString()}`);
     // Clear map
     markersRef.current.forEach(marker => marker.remove());
     markersRef.current = [];
@@ -231,14 +295,19 @@ const RouteCreator = () => {
       map.current.removeLayer('custom-route');
       map.current.removeSource('custom-route');
     }
+    setShowInstructions(true);
+    setTimeout(() => setShowInstructions(false), 8000);
   };
 
   const saveRoute = () => {
-    if (waypoints.length < 2) return;
+    if (waypoints.length < 2) {
+      alert('Adicione pelo menos um ponto de partida e um destino!');
+      return;
+    }
 
     const newRoute: CustomRoute = {
       id: `route-${Date.now()}`,
-      name: routeName,
+      name: routeName || `Rota ${new Date().toLocaleDateString()}`,
       waypoints,
       distance: calculateDistance(waypoints),
       created: new Date()
@@ -250,6 +319,7 @@ const RouteCreator = () => {
     
     setCurrentRoute(newRoute);
     setIsCreating(false);
+    alert('Rota salva com sucesso!');
   };
 
   const loadRoute = (route: CustomRoute) => {
@@ -271,6 +341,8 @@ const RouteCreator = () => {
     setWaypoints([]);
     setCurrentRoute(null);
     setIsCreating(false);
+    setStartSearch('');
+    setEndSearch('');
     markersRef.current.forEach(marker => marker.remove());
     markersRef.current = [];
     if (map.current && map.current.getLayer('custom-route')) {
@@ -308,6 +380,57 @@ const RouteCreator = () => {
             </p>
           </div>
 
+          {/* Search Locations */}
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label className="text-foreground flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-green-400" />
+                Buscar Ponto de Partida
+              </Label>
+              <div className="flex gap-2">
+                <Input
+                  value={startSearch}
+                  onChange={(e) => setStartSearch(e.target.value)}
+                  placeholder="Ex: São Paulo, SP"
+                  className="cyberpunk-input flex-1"
+                  onKeyPress={(e) => e.key === 'Enter' && searchAndFlyTo(startSearch, 'start')}
+                />
+                <Button
+                  size="sm"
+                  onClick={() => searchAndFlyTo(startSearch, 'start')}
+                  className="neon-glow"
+                  disabled={!startSearch.trim()}
+                >
+                  <Search className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-foreground flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-red-400" />
+                Buscar Destino Final
+              </Label>
+              <div className="flex gap-2">
+                <Input
+                  value={endSearch}
+                  onChange={(e) => setEndSearch(e.target.value)}
+                  placeholder="Ex: Rio de Janeiro, RJ"
+                  className="cyberpunk-input flex-1"
+                  onKeyPress={(e) => e.key === 'Enter' && searchAndFlyTo(endSearch, 'end')}
+                />
+                <Button
+                  size="sm"
+                  onClick={() => searchAndFlyTo(endSearch, 'end')}
+                  className="neon-glow"
+                  disabled={!endSearch.trim()}
+                >
+                  <Search className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+          </div>
+
           {/* Route Name */}
           <div className="space-y-2">
             <Label htmlFor="routeName" className="text-foreground">Nome da Rota</Label>
@@ -336,6 +459,11 @@ const RouteCreator = () => {
                   <Play className="w-4 h-4 mr-2" />
                   Começar Nova Rota
                 </Button>
+                <p className="text-xs text-muted-foreground text-center">
+                  1. Busque os locais acima<br/>
+                  2. Clique em "Começar Nova Rota"<br/>
+                  3. Clique no mapa para adicionar pontos
+                </p>
               </motion.div>
             )}
 
@@ -347,7 +475,7 @@ const RouteCreator = () => {
                 className="space-y-4"
               >
                 <div className="bg-muted/20 p-4 rounded-lg border border-border">
-                  <h3 className="font-bold text-primary mb-2">Instruções</h3>
+                  <h3 className="font-bold text-primary mb-2">Modo Criação Ativo</h3>
                   <p className="text-sm text-muted-foreground mb-3">
                     Clique no mapa para adicionar pontos:
                   </p>
@@ -355,18 +483,17 @@ const RouteCreator = () => {
                   {/* Tool Selection */}
                   <div className="space-y-2">
                     {[
-                      { type: 'start', label: 'Ponto de Partida', color: 'bg-green-500' },
-                      { type: 'end', label: 'Destino Final', color: 'bg-red-500' },
-                      { type: 'waypoint', label: 'Pontos Intermediários', color: 'bg-cyan-500' }
+                      { type: 'start', label: '🟢 Ponto de Partida', color: 'bg-green-500' },
+                      { type: 'end', label: '🔴 Destino Final', color: 'bg-red-500' },
+                      { type: 'waypoint', label: '🔵 Pontos Intermediários', color: 'bg-cyan-500' }
                     ].map(({ type, label, color }) => (
                       <Button
                         key={type}
                         variant={selectedTool === type ? "default" : "outline"}
                         size="sm"
-                        className={`w-full justify-start ${selectedTool === type ? 'neon-glow' : ''}`}
+                        className={`w-full justify-start text-left ${selectedTool === type ? 'neon-glow' : ''}`}
                         onClick={() => setSelectedTool(type as any)}
                       >
-                        <div className={`w-3 h-3 rounded-full mr-2 ${color}`} />
                         {label}
                       </Button>
                     ))}
@@ -380,6 +507,11 @@ const RouteCreator = () => {
                     <div className="space-y-1 text-sm">
                       <div>Pontos: {waypoints.length}</div>
                       <div>Distância: {calculateDistance(waypoints).toFixed(2)} km</div>
+                      <div className="text-xs text-muted-foreground mt-2">
+                        {waypoints.filter(w => w.type === 'start').length > 0 && '✅ Partida definida'}<br/>
+                        {waypoints.filter(w => w.type === 'end').length > 0 && '✅ Destino definido'}<br/>
+                        {waypoints.filter(w => w.type === 'waypoint').length > 0 && `✅ ${waypoints.filter(w => w.type === 'waypoint').length} pontos intermediários`}
+                      </div>
                     </div>
                   </Card>
                 )}
@@ -487,21 +619,47 @@ const RouteCreator = () => {
         <div ref={mapContainer} className="absolute inset-0" />
         
         {/* Instructions Overlay */}
+        <AnimatePresence>
+          {(isCreating && showInstructions) && (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="absolute top-4 left-4 right-4 z-10"
+            >
+              <Card className="cyberpunk-card p-4 text-center border-primary">
+                <p className="text-primary text-glow font-bold mb-1">
+                  Modo de Criação Ativo
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Clique no mapa para adicionar: <span className="text-primary font-bold">
+                    {selectedTool === 'start' ? '🟢 Ponto de Partida' : 
+                     selectedTool === 'end' ? '🔴 Destino Final' : 
+                     '🔵 Pontos Intermediários'}
+                  </span>
+                </p>
+              </Card>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Current Tool Indicator */}
         {isCreating && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="absolute top-4 left-4 right-4 z-10"
-          >
-            <Card className="cyberpunk-card p-4 text-center">
-              <p className="text-primary text-glow font-bold mb-1">
-                Modo de Criação Ativo
-              </p>
-              <p className="text-sm text-muted-foreground">
-                Clique no mapa para adicionar: <span className="text-primary">{getWaypointName(selectedTool, waypoints.length)}</span>
-              </p>
+          <div className="absolute bottom-4 left-4 z-10">
+            <Card className="cyberpunk-card p-3">
+              <div className="flex items-center gap-2 text-sm">
+                <div className={`w-3 h-3 rounded-full ${
+                  selectedTool === 'start' ? 'bg-green-500' :
+                  selectedTool === 'end' ? 'bg-red-500' : 'bg-cyan-500'
+                }`} />
+                <span className="text-primary font-medium">
+                  {selectedTool === 'start' ? 'Clique para Ponto de Partida' :
+                   selectedTool === 'end' ? 'Clique para Destino Final' :
+                   'Clique para Pontos Intermediários'}
+                </span>
+              </div>
             </Card>
-          </motion.div>
+          </div>
         )}
       </div>
     </div>
