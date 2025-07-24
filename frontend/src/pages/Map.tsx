@@ -19,11 +19,15 @@ const Map = () => {
   const map = useRef<maptilersdk.Map | null>(null);
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [selectedWaypoint, setSelectedWaypoint] = useState<any>(null);
-  const [mapStyle, setMapStyle] = useState('streets-v2');
+  const [mapStyle, setMapStyle] = useState('backdrop'); // Use backdrop as base for cyberpunk effect
+  const [isCyberpunkMode, setIsCyberpunkMode] = useState(true); // Default to cyberpunk
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredWaypoints, setFilteredWaypoints] = useState<any[]>([]);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [draggedWaypoint, setDraggedWaypoint] = useState<any>(null);
+  const markersRef = useRef<Map<number, maptilersdk.Marker>>(new Map());
   
   // Load CSV data
   const { getCombinedData, loading: dataLoading, error: dataError } = useSutraData();
