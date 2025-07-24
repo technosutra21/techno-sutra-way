@@ -115,27 +115,81 @@ All colors MUST be HSL for maximum compatibility.
 }
 
 @layer components {
-  /* Cyberpunk utilities */
+  /* Enhanced Cyberpunk utilities */
   .neon-glow {
     box-shadow: var(--glow-cyan);
-    transition: box-shadow var(--transition-normal);
+    transition: all var(--transition-normal);
+    position: relative;
+    overflow: hidden;
   }
 
   .neon-glow:hover {
     box-shadow: var(--glow-cyan), 0 0 40px hsl(180 100% 50% / 0.3);
+    transform: translateY(-2px);
+  }
+
+  .neon-glow::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, hsl(180 100% 50% / 0.2), transparent);
+    transition: left 0.8s;
+  }
+
+  .neon-glow:hover::before {
+    left: 100%;
   }
 
   .purple-glow {
     box-shadow: var(--glow-purple);
-    transition: box-shadow var(--transition-normal);
+    transition: all var(--transition-normal);
+    position: relative;
+    overflow: hidden;
   }
 
   .purple-glow:hover {
     box-shadow: var(--glow-purple), 0 0 40px hsl(280 100% 60% / 0.3);
+    transform: translateY(-2px);
+  }
+
+  .purple-glow::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, hsl(280 100% 60% / 0.2), transparent);
+    transition: left 0.8s;
+  }
+
+  .purple-glow:hover::before {
+    left: 100%;
   }
 
   .gradient-neon {
     background: var(--gradient-neon);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .gradient-neon::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 49%, hsl(0 0% 100% / 0.1) 50%, transparent 51%);
+    animation: shimmer 3s infinite;
+  }
+
+  @keyframes shimmer {
+    0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
   }
 
   .gradient-dark {
@@ -143,12 +197,36 @@ All colors MUST be HSL for maximum compatibility.
   }
 
   .text-glow {
-    text-shadow: 0 0 10px currentColor;
+    text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor;
+    animation: textPulse 3s ease-in-out infinite;
+  }
+
+  @keyframes textPulse {
+    0%, 100% { text-shadow: 0 0 10px currentColor; }
+    50% { text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor; }
   }
 
   .border-neon {
     border: 1px solid hsl(var(--primary));
     box-shadow: 0 0 10px hsl(var(--primary) / 0.3);
+    position: relative;
+  }
+
+  .border-neon::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(45deg, hsl(var(--primary)), transparent, hsl(var(--accent)), transparent, hsl(var(--primary)));
+    background-size: 200% 200%;
+    border-radius: inherit;
+    z-index: -1;
+    animation: borderRotate 4s linear infinite;
+  }
+
+  @keyframes borderRotate {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
   }
 
   .cyberpunk-card {
@@ -156,12 +234,27 @@ All colors MUST be HSL for maximum compatibility.
     border: 1px solid hsl(var(--border));
     backdrop-filter: blur(10px);
     transition: all var(--transition-normal);
+    position: relative;
+  }
+
+  .cyberpunk-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, hsl(var(--primary) / 0.05), transparent, hsl(var(--accent) / 0.05));
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity var(--transition-normal);
   }
 
   .cyberpunk-card:hover {
     border-color: hsl(var(--primary));
     box-shadow: var(--glow-cyan);
-    transform: translateY(-2px);
+    transform: translateY(-2px) scale(1.02);
+  }
+
+  .cyberpunk-card:hover::before {
+    opacity: 1;
   }
 
   /* Map styles - MapTiler */
@@ -174,5 +267,15 @@ All colors MUST be HSL for maximum compatibility.
 
   .maptilersdk-popup-anchor-bottom .maptilersdk-popup-tip {
     border-top-color: hsl(var(--card)) !important;
+  }
+
+  /* Pulse animation for waypoint markers */
+  @keyframes waypointPulse {
+    0%, 100% { box-shadow: 0 0 20px #00ffff; }
+    50% { box-shadow: 0 0 40px #00ffff, 0 0 60px #00ffff; }
+  }
+
+  .waypoint-marker {
+    animation: waypointPulse 2s ease-in-out infinite;
   }
 }
