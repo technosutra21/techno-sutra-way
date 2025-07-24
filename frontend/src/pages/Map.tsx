@@ -363,6 +363,16 @@ const Map = () => {
       {/* Map Container */}
       <div ref={mapContainer} className="absolute inset-0" />
       
+      {/* Cyberpunk Overlay */}
+      {isCyberpunkMode && (
+        <div className="cyberpunk-overlay" />
+      )}
+      
+      {/* Edit Mode Overlay */}
+      {editMode && (
+        <div className="edit-mode-overlay" />
+      )}
+      
       {/* Enhanced Cyberpunk Overlay */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-background/30 to-transparent" />
