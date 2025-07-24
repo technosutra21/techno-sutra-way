@@ -444,31 +444,37 @@ const Map = () => {
           <Button 
             variant="outline" 
             size="sm" 
-            className="w-full neon-glow transition-all duration-300 hover:scale-105"
-            onClick={() => setMapStyle('backdrop')}
+            className={`w-full transition-all duration-300 hover:scale-105 ${
+              isCyberpunkMode ? 'gradient-neon text-black font-bold' : 'neon-glow'
+            }`}
+            onClick={() => setMapStyleHandler('backdrop', true)}
           >
-            <Navigation className="w-4 h-4 mr-2" />
-            Modo Sombras
+            <Zap className="w-4 h-4 mr-2" />
+            Modo Cyberpunk
           </Button>
           
           <Button 
             variant="outline" 
             size="sm" 
-            className="w-full purple-glow transition-all duration-300 hover:scale-105"
-            onClick={() => setMapStyle('dataviz')}
+            className={`w-full transition-all duration-300 hover:scale-105 ${
+              !isCyberpunkMode && mapStyle === 'backdrop' ? 'bg-muted text-foreground' : 'neon-glow'
+            }`}
+            onClick={() => setMapStyleHandler('backdrop', false)}
           >
-            <Route className="w-4 h-4 mr-2" />
-            Modo Cyberpunk
+            <Navigation className="w-4 h-4 mr-2" />
+            Modo Sombras
           </Button>
 
           <Button 
             variant="outline" 
             size="sm" 
-            className="w-full gradient-neon text-black font-bold transition-all duration-300 hover:scale-105"
-            onClick={() => setMapStyle('streets-v2')}
+            className={`w-full purple-glow transition-all duration-300 hover:scale-105 ${
+              !isCyberpunkMode && mapStyle === 'streets-v2' ? 'bg-muted text-foreground' : ''
+            }`}
+            onClick={() => setMapStyleHandler('streets-v2', false)}
           >
-            <Zap className="w-4 h-4 mr-2" />
-            Neural Network
+            <Route className="w-4 h-4 mr-2" />
+            Modo Clássico
           </Button>
         </div>
       </motion.div>
