@@ -386,7 +386,15 @@ const Map = () => {
                       className="flex items-center gap-2 text-xs text-accent mt-1"
                     >
                       <Zap className="w-3 h-3" />
-                      <span>Capítulo {selectedWaypoint.chapter}/56</span>
+                      <span>{selectedWaypoint.subtitle} • {selectedWaypoint.occupation}</span>
+                    </motion.div>
+                    <motion.div
+                      initial={{ y: 10, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      transition={{ delay: 0.15 }}
+                      className="text-xs text-muted-foreground mt-1"
+                    >
+                      📍 {selectedWaypoint.location}
                     </motion.div>
                   </div>
                   <Button
