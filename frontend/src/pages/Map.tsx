@@ -51,6 +51,8 @@ const Map = () => {
   useEffect(() => {
     if (!mapContainer.current) return;
 
+    setIsLoading(true);
+
     // Set MapTiler API key
     maptilersdk.config.apiKey = 'rg7OAqXjLo7cLdwqlrVt';
     
@@ -71,6 +73,11 @@ const Map = () => {
       }),
       'top-right'
     );
+
+    // Map loaded event
+    map.current.on('load', () => {
+      setIsLoading(false);
+    });
 
     // Get user location
     if (navigator.geolocation) {
