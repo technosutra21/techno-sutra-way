@@ -3,8 +3,9 @@ import * as maptilersdk from '@maptiler/sdk';
 import "@maptiler/sdk/dist/maptiler-sdk.css";
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { MapPin, Navigation, Route, Users } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { MapPin, Navigation, Route, Users, Zap, Search, Maximize } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Input } from '@/components/ui/input';
 
 // Sample waypoints data (56 points for the journey)
 const ORIGINAL_ROUTE = {
