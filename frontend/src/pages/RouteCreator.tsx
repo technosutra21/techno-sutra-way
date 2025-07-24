@@ -165,13 +165,13 @@ const RouteCreator = () => {
           `;
           el.textContent = String(waypoint.chapter);
 
-          new mapboxgl.Marker(el)
+          new maptilersdk.Marker(el)
             .setLngLat(waypoint.coordinates)
             .addTo(map.current!);
         });
 
         // Fit map to route
-        const bounds = new mapboxgl.LngLatBounds();
+        const bounds = new maptilersdk.LngLatBounds();
         bounds.extend(startCoords);
         bounds.extend(endCoords);
         waypoints.forEach(w => bounds.extend(w.coordinates));
