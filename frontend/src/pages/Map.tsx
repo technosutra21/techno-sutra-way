@@ -65,7 +65,7 @@ const Map = () => {
           setUserLocation(userCoords);
           
           // Add user location marker
-          new mapboxgl.Marker({
+          new maptilersdk.Marker({
             color: '#00ffff',
             scale: 1.2
           })
