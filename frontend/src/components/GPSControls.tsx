@@ -16,11 +16,17 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+interface Waypoint {
+  id: number;
+  title: string;
+  distance: number;
+}
+
 interface GPSControlsProps {
   isTrackingUser: boolean;
   userLocation: [number, number] | null;
   userAccuracy: number | null;
-  nearbyWaypoints: any[];
+  nearbyWaypoints: Waypoint[];
   visitedCount: number;
   totalProgress: number;
   onStartTracking: () => void;
