@@ -18,6 +18,7 @@ import { CharacterDetailModal } from '@/components/CharacterDetailModal';
 import { logger } from '@/lib/logger';
 import { useProgress } from '@/hooks/useProgress';
 import GPSControls from '@/components/GPSControls';
+import { useToast } from '@/hooks/use-toast';
 
 // Base coordinates for Águas da Prata, SP
 const BASE_COORDINATES = {
