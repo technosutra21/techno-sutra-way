@@ -221,7 +221,7 @@ const Map = () => {
           logger.info('✅ Modo cyberpunk aplicado!');
         }, 1000);
       } else if (mapContainer.current) {
-        console.log('🔄 Removendo modo cyberpunk...');
+        logger.info('🔄 Removendo modo cyberpunk...');
         mapContainer.current.classList.remove('cyberpunk-map');
       }
     });
