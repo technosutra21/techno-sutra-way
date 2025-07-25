@@ -197,47 +197,97 @@ const Map = () => {
     }
   }, [searchTerm, waypoints]);
 
+  // Initialize map with proper error handling
   useEffect(() => {
-    if (!mapContainer.current || waypoints.length === 0) return;
+    if (!mapContainer.current) return;
 
     setIsLoading(true);
 
     // Set MapTiler API key
     maptilersdk.config.apiKey = 'rg7OAqXjLo7cLdwqlrVt';
     
-    map.current = new maptilersdk.Map({
-      container: mapContainer.current,
-      style: mapStyle,
-      center: [BASE_COORDINATES.lng, BASE_COORDINATES.lat],
-      zoom: 12,
-      pitch: 45,
-      bearing: 0,
-      attributionControl: false
-    });
+    // Get proper style URL
+    const getMapStyle = (style: string) => {
+      const styles = {
+        'backdrop': 'https://api.maptiler.com/maps/backdrop/style.json?key=rg7OAqXjLo7cLdwqlrVt',
+        'streets-v2': 'https://api.maptiler.com/maps/streets-v2/style.json?key=rg7OAqXjLo7cLdwqlrVt',
+        'satellite': 'https://api.maptiler.com/maps/satellite/style.json?key=rg7OAqXjLo7cLdwqlrVt',
+        'dark': 'https://api.maptiler.com/maps/basic-v2-dark/style.json?key=rg7OAqXjLo7cLdwqlrVt'
+      };
+      return styles[style as keyof typeof styles] || styles.backdrop;
+    };
+    
+    try {
+      map.current = new maptilersdk.Map({
+        container: mapContainer.current,
+        style: getMapStyle(mapStyle),
+        center: [BASE_COORDINATES.lng, BASE_COORDINATES.lat],
+        zoom: 14,
+        pitch: 45,
+        bearing: 0,
+        attributionControl: false,
+        antialias: true,
+        optimizeForTerrain: true
+      });
 
-    // Add navigation controls
-    map.current.addControl(
-      new maptilersdk.NavigationControl({
-        visualizePitch: true,
-      }),
-      'top-right'
-    );
+      // Add navigation controls
+      map.current.addControl(
+        new maptilersdk.NavigationControl({
+          visualizePitch: true,
+          showZoom: true,
+          showCompass: true
+        }),
+        'top-right'
+      );
 
-    // Map loaded event
-    map.current.on('load', () => {
+      // Map loaded event
+      map.current.on('load', () => {
+        logger.info('🗺️ Map loaded successfully');
+        setIsLoading(false);
+        
+        // Apply cyberpunk styling after map loads
+        if (isCyberpunkMode && mapContainer.current) {
+          logger.info('🎨 Aplicando modo cyberpunk...');
+          setTimeout(() => {
+            mapContainer.current!.classList.add('cyberpunk-map');
+            logger.info('✅ Modo cyberpunk aplicado!');
+          }, 500);
+        } else if (mapContainer.current) {
+          mapContainer.current.classList.remove('cyberpunk-map');
+        }
+        
+        // Generate and add waypoints after map loads
+        const currentWaypoints = generateWaypoints();
+        setWaypoints(currentWaypoints);
+        setFilteredWaypoints(currentWaypoints);
+        addWaypointsToMap(currentWaypoints);
+      });
+
+      // Error handling
+      map.current.on('error', (e) => {
+        logger.error('Map error:', e);
+        setIsLoading(false);
+        toast({
+          title: "Erro no Mapa",
+          description: "Problema ao carregar o mapa. Tentando novamente...",
+          variant: "destructive",
+        });
+      });
+
+      // Style change handler
+      map.current.on('styledata', () => {
+        logger.info('Map style updated');
+      });
+
+    } catch (error) {
+      logger.error('Failed to initialize map:', error);
       setIsLoading(false);
-      
-      // Apply cyberpunk styling after map loads
-      if (isCyberpunkMode && mapContainer.current) {
-        logger.info('🎨 Aplicando modo cyberpunk...');
-        setTimeout(() => {
-          mapContainer.current!.classList.add('cyberpunk-map');
-          logger.info('✅ Modo cyberpunk aplicado!');
-        }, 1000);
-      } else if (mapContainer.current) {
-        logger.info('🔄 Removendo modo cyberpunk...');
-        mapContainer.current.classList.remove('cyberpunk-map');
-      }
+      toast({
+        title: "Erro de Inicialização",
+        description: "Não foi possível inicializar o mapa",
+        variant: "destructive",
+      });
+    }
     });
 
     // Get user location
