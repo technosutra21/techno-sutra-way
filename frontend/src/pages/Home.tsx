@@ -2,9 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { MapPin, Users, Route, Sparkles, Eye, Navigation, Zap, Book } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { MapPin, Users, Route, Sparkles, Eye, Navigation, Zap, Book, Trophy, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useSutraData } from '@/hooks/useSutraData';
+import { useProgress } from '@/hooks/useProgress';
+import { useLanguage } from '@/components/LanguageSwitcher';
 
 const Home = () => {
   const { getCombinedData, loading: dataLoading } = useSutraData();
