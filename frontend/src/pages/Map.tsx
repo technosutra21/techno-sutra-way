@@ -1006,8 +1006,10 @@ const Map = () => {
               whileHover={{ scale: 1.1 }}
               className="text-center cursor-pointer"
             >
-              <div className="text-primary text-glow font-bold text-xl">56</div>
-              <div className="text-muted-foreground">Pontos</div>
+              <div className="text-primary text-glow font-bold text-xl">
+                {visitedCount}
+              </div>
+              <div className="text-muted-foreground">Visitados</div>
             </motion.div>
             <motion.div 
               whileHover={{ scale: 1.1 }}
@@ -1023,9 +1025,9 @@ const Map = () => {
               className="text-center cursor-pointer"
             >
               <div className="text-cyan-400 text-glow font-bold text-xl">
-                {userLocation ? '1' : '0'}
+                {totalProgress.toFixed(0)}%
               </div>
-              <div className="text-muted-foreground">Localizado</div>
+              <div className="text-muted-foreground">Progresso</div>
             </motion.div>
             {editMode && (
               <motion.div 
