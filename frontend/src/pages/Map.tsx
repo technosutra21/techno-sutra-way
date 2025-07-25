@@ -83,10 +83,10 @@ const Map = () => {
           setFixedCoordinates(coordinates);
           logger.info('✅ Fixed coordinates loaded:', Object.keys(coordinates).length, 'waypoints');
         } else {
-          console.warn('⚠️ Could not load fixed coordinates, using fallback positioning');
+          logger.warn('⚠️ Could not load fixed coordinates, using fallback positioning');
         }
       } catch (error) {
-        console.warn('⚠️ Error loading fixed coordinates:', error);
+        logger.warn('⚠️ Error loading fixed coordinates:', error);
       }
     };
     
