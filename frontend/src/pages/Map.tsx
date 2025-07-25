@@ -359,45 +359,125 @@ const Map = () => {
         }
       });
 
-      // Clear existing markers
-      markersRef.current.forEach(marker => marker.remove());
-      markersRef.current.clear();
+  // Add waypoints to map
+  const addWaypointsToMap = useCallback((waypointsToAdd: any[]) => {
+    if (!map.current || waypointsToAdd.length === 0) return;
 
-      // Add waypoints with drag functionality
-      waypoints.forEach((waypoint, index) => {
-        const el = document.createElement('div');
-        el.className = `waypoint-marker ${editMode ? 'waypoint-edit-mode waypoint-draggable' : ''}`;
-        el.style.cssText = `
-          width: 32px;
-          height: 32px;
-          border-radius: 50%;
-          background: linear-gradient(135deg, ${isCyberpunkMode ? '#ff00ff, #00ffff' : '#00ffff, #ff00ff'});
-          border: 2px solid #ffffff;
-          cursor: ${editMode ? 'grab' : 'pointer'};
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: #000;
-          font-weight: bold;
-          font-size: 11px;
-          box-shadow: 0 0 20px ${isCyberpunkMode ? '#ff00ff' : '#00ffff'};
-          position: relative;
-          z-index: ${editMode ? '1000' : '100'};
+    // Clear existing markers
+    markersRef.current.forEach(marker => marker.remove());
+    markersRef.current.clear();
+
+    // Add waypoints with enhanced styling
+    waypointsToAdd.forEach((waypoint) => {
+      const el = document.createElement('div');
+      const isVisited = progressVisitedWaypoints.has(waypoint.chapter);
+      
+      el.className = `waypoint-marker ${editMode ? 'waypoint-edit-mode waypoint-draggable' : ''} ${isVisited ? 'waypoint-visited' : ''}`;
+      el.style.cssText = `
+        width: ${isVisited ? '36px' : '32px'};
+        height: ${isVisited ? '36px' : '32px'};
+        border-radius: 50%;
+        background: linear-gradient(135deg, 
+          ${isVisited ? '#00ff00, #ffff00' : 
+            isCyberpunkMode ? '#ff00ff, #00ffff' : '#00ffff, #ff00ff'});
+        border: 2px solid ${isVisited ? '#00ff00' : '#ffffff'};
+        cursor: ${editMode ? 'grab' : 'pointer'};
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: ${isVisited ? '#000' : '#000'};
+        font-weight: bold;
+        font-size: ${isVisited ? '12px' : '11px'};
+        box-shadow: 0 0 ${isVisited ? '25px' : '20px'} ${
+          isVisited ? '#00ff00' : 
+          isCyberpunkMode ? '#ff00ff' : '#00ffff'
+        };
+        position: relative;
+        z-index: ${editMode ? '1000' : isVisited ? '200' : '100'};
+        transition: all 0.3s ease;
+      `;
+      el.textContent = isVisited ? '✓' : String(waypoint.chapter);
+      el.title = `${waypoint.title} - ${waypoint.occupation}${isVisited ? ' (Visitado)' : ''}`;
+
+      // Add hover effects
+      el.addEventListener('mouseenter', () => {
+        el.style.transform = 'scale(1.2)';
+        el.style.zIndex = '1000';
+      });
+      
+      el.addEventListener('mouseleave', () => {
+        el.style.transform = 'scale(1)';
+        el.style.zIndex = editMode ? '1000' : isVisited ? '200' : '100';
+      });
+
+      // Add click handler
+      el.addEventListener('click', (e) => {
+        if (!editMode) {
+          setSelectedWaypoint(waypoint);
+        }
+        e.stopPropagation();
+      });
+
+      // Create marker with enhanced popup
+      const marker = new maptilersdk.Marker(el, { draggable: editMode })
+        .setLngLat(waypoint.coordinates);
+
+      // Add custom popup
+      if (!editMode) {
+        const popupContent = `
+          <div class="cyberpunk-popup" style="
+            background: linear-gradient(135deg, #000033, #330066);
+            border: 1px solid #00ffff;
+            border-radius: 8px;
+            padding: 12px;
+            color: #ffffff;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+            font-family: 'Inter', sans-serif;
+            max-width: 200px;
+          ">
+            <h3 style="color: #00ffff; margin: 0 0 8px 0; font-size: 14px; text-shadow: 0 0 10px #00ffff;">
+              ${waypoint.title}
+            </h3>
+            <p style="color: #ff00ff; margin: 0 0 6px 0; font-size: 11px; font-weight: bold;">
+              ${waypoint.occupation}
+            </p>
+            <p style="color: #cccccc; margin: 0; font-size: 10px; line-height: 1.3;">
+              ${waypoint.meaning.substring(0, 80)}...
+            </p>
+            <div style="margin-top: 8px; font-size: 9px; color: #888888;">
+              📍 ${waypoint.location}
+            </div>
+          </div>
         `;
-        el.textContent = String(waypoint.chapter);
-        el.title = `${waypoint.title} - ${waypoint.occupation}`;
 
-        // Add click handler
-        el.addEventListener('click', (e) => {
-          if (!editMode) {
-            setSelectedWaypoint(waypoint);
-          }
-          e.stopPropagation();
+        const popup = new maptilersdk.Popup({ 
+          closeButton: false, 
+          offset: 25,
+          className: 'cyberpunk-popup-container'
+        }).setHTML(popupContent);
+        
+        marker.setPopup(popup);
+      }
+
+      // Drag handler for edit mode
+      if (editMode) {
+        marker.on('dragend', () => {
+          const lngLat = marker.getLngLat();
+          const updatedCoordinates = { ...fixedCoordinates };
+          updatedCoordinates[waypoint.chapter] = {
+            ...updatedCoordinates[waypoint.chapter],
+            lat: lngLat.lat,
+            lng: lngLat.lng
+          };
+          setFixedCoordinates(updatedCoordinates);
+          localStorage.setItem('waypoint-coordinates-custom', JSON.stringify(updatedCoordinates));
         });
+      }
 
-        // Create marker
-        const marker = new maptilersdk.Marker(el, { draggable: editMode })
-          .setLngLat(waypoint.coordinates)
+      marker.addTo(map.current!);
+      markersRef.current.set(waypoint.chapter, marker);
+    });
+  }, [editMode, isCyberpunkMode, progressVisitedWaypoints, fixedCoordinates]);
           .setPopup(new maptilersdk.Popup({ closeButton: false, offset: 25 })
             .setHTML(`
               <div class="cyberpunk-popup">
