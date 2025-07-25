@@ -14,6 +14,8 @@ O projeto mapeia os 56 personagens místicos do texto sagrado Buddhāvataṃsaka
 - **Editor de posições** em tempo real com arrastar e soltar
 - **Navegação fluida** com MapTiler SDK e controles avançados
 - **Busca inteligente** por personagens, capítulos e localizações
+- **Sistema de tracking GPS** com detecção de proximidade
+- **Progresso de jornada** com gamificação e conquistas
 
 ### 👤 **Galeria de Personagens 3D**
 - **56 modelos 3D** de alta qualidade dos personagens místicos
@@ -25,8 +27,15 @@ O projeto mapeia os 56 personagens místicos do texto sagrado Buddhāvataṃsaka
 ### 🛤️ **Criador de Rotas Personalizadas**
 - **Geocodificação inteligente** usando MapTiler API
 - **Criação visual** de waypoints personalizados
-- **Salvamento local** de rotas criadas
-- **Exportação de dados** para compartilhamento
+- **Salvamento e gerenciamento** de rotas criadas
+- **Exportação e importação** de dados para compartilhamento
+- **Integração com mapa principal** para visualização
+
+### 📊 **Sistema de Progresso**
+- **Tracking de visitas** a waypoints com persistência local
+- **Conquistas e marcos** (Explorador, Meio Caminho, Iluminado)
+- **Barra de progresso** visual em tempo real
+- **Estatísticas detalhadas** de jornada
 
 ### 🎨 **Design System Cyberpunk**
 - **Paleta AMOLED** com cores neon (Cyan #00FFFF, Purple #B347FF)
@@ -69,12 +78,14 @@ React 18.3.1 (SPA)
 
 ### **Gestão de Dados**
 ```
-Sistema de CSV dinâmico
+Sistema de CSV dinâmico + LocalStorage
 ├── characters.csv             # Dados principais (PT)
 ├── characters_en.csv          # Dados em inglês
 ├── chapters.csv               # Capítulos detalhados (PT)
 ├── chapters_en.csv            # Capítulos em inglês
-└── waypoint-coordinates.json  # Coordenadas fixas dos pontos
+├── waypoint-coordinates.json  # Coordenadas fixas dos pontos
+├── Progress tracking          # Visitas e conquistas
+└── Route management           # Rotas personalizadas
 ```
 
 ### **Estado & Performance**
