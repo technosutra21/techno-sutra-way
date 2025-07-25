@@ -456,8 +456,8 @@ const Map = () => {
     // Auto-visit nearby waypoints
     nearby.forEach(waypoint => {
       const distance = calculateDistance(userLat, userLng, waypoint.coordinates[1], waypoint.coordinates[0]);
-      if (distance <= 50 && !visitedWaypoints.has(waypoint.chapter)) { // Within 50 meters
-        setVisitedWaypoints(prev => new Set([...prev, waypoint.chapter]));
+      if (distance <= 50 && !progressVisitedWaypoints.has(waypoint.chapter)) { // Within 50 meters
+        markAsVisited(waypoint.chapter);
         toast({
           title: "🎉 Waypoint Visitado!",
           description: `Você chegou ao ${waypoint.title} - ${waypoint.occupation}`,
