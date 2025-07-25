@@ -465,7 +465,7 @@ const Map = () => {
         });
       }
     });
-  }, [waypoints, visitedWaypoints]);
+  }, [waypoints, progressVisitedWaypoints]);
 
   // Start real-time location tracking
   const startLocationTracking = useCallback(() => {
