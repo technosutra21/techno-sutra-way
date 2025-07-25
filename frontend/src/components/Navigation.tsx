@@ -8,15 +8,17 @@ import {
   SheetContent,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { LanguageSwitcher, useLanguage } from './LanguageSwitcher';
 
 const Navigation = () => {
   const location = useLocation();
+  const { t } = useLanguage();
   
   const navItems = [
-    { path: '/', icon: Home, label: 'Início' },
-    { path: '/map', icon: Map, label: 'Mapa' },
-    { path: '/gallery', icon: Users, label: 'Galeria' },
-    { path: '/route-creator', icon: Route, label: 'Criar Rota' },
+    { path: '/', icon: Home, label: t('nav.home') },
+    { path: '/map', icon: Map, label: t('nav.map') },
+    { path: '/gallery', icon: Users, label: t('nav.gallery') },
+    { path: '/route-creator', icon: Route, label: t('nav.routeCreator') },
   ];
 
   const NavContent = ({ isMobile = false }: { isMobile?: boolean }) => (
@@ -60,6 +62,7 @@ const Navigation = () => {
             
             <div className="flex items-center gap-4">
               <NavContent />
+              <LanguageSwitcher />
             </div>
           </div>
         </div>
@@ -74,6 +77,7 @@ const Navigation = () => {
           </Link>
           
           <div className="flex items-center gap-2">
+            <LanguageSwitcher />
             <Sheet>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="sm">
