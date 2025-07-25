@@ -122,7 +122,7 @@ const Map = () => {
       );
     }
     
-    console.log(`✅ Generated ${waypointsWithCoords.length} waypoints with fixed coordinates`);
+    logger.info(`✅ Generated ${waypointsWithCoords.length} waypoints with fixed coordinates`);
     return waypointsWithCoords;
   };
 
