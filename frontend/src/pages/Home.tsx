@@ -188,15 +188,62 @@ const Home = () => {
         >
           <Card className="cyberpunk-card p-8 max-w-4xl mx-auto">
             <h2 className="text-3xl font-bold text-primary text-glow mb-8">
-              A Jornada em Números
+              {t('home.journeyNumbers')}
             </h2>
+            
+            {/* Progress Summary */}
+            {visitedCount > 0 && (
+              <div className="mb-6 p-4 bg-gradient-to-r from-primary/20 to-accent/20 rounded-lg border border-primary/30">
+                <div className="flex items-center justify-center gap-4 text-sm">
+                  <div className="flex items-center gap-2">
+                    <Trophy className="w-4 h-4 text-yellow-400" />
+                    <span className="text-muted-foreground">Progresso:</span>
+                    <span className="font-bold text-primary">{totalProgress.toFixed(1)}%</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Star className="w-4 h-4 text-accent" />
+                    <span className="text-muted-foreground">Visitados:</span>
+                    <span className="font-bold text-accent">{visitedCount}/56</span>
+                  </div>
+                  {achievements.length > 0 && (
+                    <Badge variant="outline" className="border-yellow-400 text-yellow-400">
+                      {achievements.length} conquista{achievements.length > 1 ? 's' : ''}
+                    </Badge>
+                  )}
+                </div>
+                
+                {/* Progress Bar */}
+                <div className="w-full bg-muted rounded-full h-2 mt-3">
+                  <div 
+                    className="bg-gradient-to-r from-primary to-accent h-2 rounded-full transition-all duration-1000"
+                    style={{ width: `${totalProgress}%` }}
+                  />
+                </div>
+              </div>
+            )}
             
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               {[
-                { number: '56', label: 'Capítulos Sagrados', color: 'text-primary' },
-                { number: '56', label: 'Modelos 3D', color: 'text-accent' },
-                { number: '∞', label: 'Rotas Possíveis', color: 'text-yellow-400' },
-                { number: '1', label: 'Destino Espiritual', color: 'text-green-400' }
+                { 
+                  number: visitedCount.toString(), 
+                  label: t('home.visitedPoints'), 
+                  color: visitedCount > 0 ? 'text-primary' : 'text-muted-foreground' 
+                },
+                { 
+                  number: '56', 
+                  label: t('home.models3d'), 
+                  color: 'text-accent' 
+                },
+                { 
+                  number: '∞', 
+                  label: t('home.possibleRoutes'), 
+                  color: 'text-yellow-400' 
+                },
+                { 
+                  number: isComplete ? '✓' : '1', 
+                  label: t('home.spiritualDestination'), 
+                  color: isComplete ? 'text-green-400' : 'text-muted-foreground' 
+                }
               ].map((stat, index) => (
                 <div key={index} className="text-center">
                   <div className={`text-4xl md:text-5xl font-bold ${stat.color} text-glow mb-2`}>
