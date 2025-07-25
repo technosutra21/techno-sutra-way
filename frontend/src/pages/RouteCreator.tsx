@@ -7,6 +7,7 @@ import { MapPin, Route, Zap, Download, Play, Trash2, Save, Search, Navigation } 
 import { motion, AnimatePresence } from 'framer-motion';
 import * as maptilersdk from '@maptiler/sdk';
 import "@maptiler/sdk/dist/maptiler-sdk.css";
+import { logger } from '@/lib/logger';
 
 interface CustomWaypoint {
   id: string;
