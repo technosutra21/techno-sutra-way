@@ -100,6 +100,7 @@ const translations = {
     'home.createRouteDesc': 'Create your own spiritual journey anywhere in the world',
     'home.journeyNumbers': 'The Journey in Numbers',
     'home.sacredChapters': 'Sacred Chapters',
+    'home.visitedPoints': 'Visited Points',
     'home.models3d': '3D Models',
     'home.possibleRoutes': 'Possible Routes',
     'home.spiritualDestination': 'Spiritual Destination',
