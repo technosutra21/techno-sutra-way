@@ -301,18 +301,48 @@ All colors MUST be HSL for maximum compatibility.
     transform: scale(1.2);
   }
 
-  /* Cyberpunk Map Style - DESABILITADO TEMPORARIAMENTE */
-  .cyberpunk-map .maptiler-map {
-    filter: invert(1) hue-rotate(180deg) brightness(1.1) contrast(1.1);
-    transition: filter 0.5s ease;
+  /* Cyberpunk Map Style - ATIVADO E MELHORADO */
+  .cyberpunk-map .maplibregl-canvas-container canvas,
+  .cyberpunk-map .maptiler-map canvas {
+    filter: invert(1) hue-rotate(180deg) brightness(1.3) contrast(1.2) saturate(1.4);
+    transition: filter 0.8s ease;
+  }
+
+  .cyberpunk-map {
+    position: relative;
+    background: linear-gradient(135deg, #000000 0%, #1a0033 50%, #000066 100%);
   }
 
   .cyberpunk-map::before {
-    display: none;
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 20% 20%, rgba(0, 255, 255, 0.1) 0%, transparent 25%),
+      radial-gradient(circle at 80% 80%, rgba(255, 0, 255, 0.1) 0%, transparent 25%),
+      linear-gradient(45deg, transparent 48%, rgba(0, 255, 255, 0.02) 49%, rgba(255, 0, 255, 0.02) 51%, transparent 52%);
+    background-size: 300px 300px, 250px 250px, 50px 50px;
+    pointer-events: none;
+    z-index: 1;
+    animation: cyberpunkGrid 20s linear infinite;
   }
 
-  .cyberpunk-map::after {
-    display: none;
+  @keyframes cyberpunkGrid {
+    0% { 
+      background-position: 0% 0%, 100% 100%, 0% 0%;
+      opacity: 0.6;
+    }
+    50% {
+      background-position: 100% 50%, 0% 50%, 50% 50%;
+      opacity: 0.8;
+    }
+    100% { 
+      background-position: 0% 100%, 100% 0%, 100% 100%;
+      opacity: 0.6;
+    }
   }
 
   /* Enhanced cyberpunk overlay for better neon effect */
