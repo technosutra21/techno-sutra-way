@@ -36,7 +36,7 @@ const Map = () => {
   const [userMarker, setUserMarker] = useState<maptilersdk.Marker | null>(null);
   const [locationWatchId, setLocationWatchId] = useState<number | null>(null);
   const [nearbyWaypoints, setNearbyWaypoints] = useState<any[]>([]);
-  const [visitedWaypoints, setVisitedWaypoints] = useState<Set<number>>(new Set());
+  // Note: visitedWaypoints removed - using progressVisitedWaypoints from useProgress hook
   
   // Map and UI states
   const [selectedWaypoint, setSelectedWaypoint] = useState<any>(null);
