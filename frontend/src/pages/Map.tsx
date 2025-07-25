@@ -144,6 +144,78 @@ const Map = () => {
     return waypointsWithCoords;
   }, [fixedCoordinates, dataLoading, dataError]); // Remove getCombinedData from dependencies
 
+  // Add waypoints to map
+  const addWaypointsToMap = useCallback((waypointsToAdd: any[]) => {
+    if (!map.current || waypointsToAdd.length === 0) return;
+
+    // Clear existing markers
+    markersRef.current.forEach(marker => marker.remove());
+    markersRef.current.clear();
+
+    waypointsToAdd.forEach((waypoint) => {
+      const el = document.createElement('div');
+      const isVisitedPoint = progressVisitedWaypoints.has(waypoint.chapter);
+      const styleConfig = MAP_STYLES[currentStyle];
+      
+      el.className = `waypoint-marker ${isVisitedPoint ? 'waypoint-visited' : ''}`;
+      el.style.cssText = `
+        width: ${isVisitedPoint ? '40px' : '36px'};
+        height: ${isVisitedPoint ? '40px' : '36px'};
+        border-radius: 50%;
+        background: ${isVisitedPoint ? 
+          'linear-gradient(135deg, #00ff00, #88ff00)' : 
+          styleConfig.cyberpunk ? 
+            'linear-gradient(135deg, #ff00ff, #00ffff)' : 
+            'linear-gradient(135deg, #00aaff, #ff6600)'
+        };
+        border: 3px solid ${isVisitedPoint ? '#ffffff' : '#ffffff'};
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: ${isVisitedPoint ? '#000' : '#000'};
+        font-weight: bold;
+        font-size: ${isVisitedPoint ? '14px' : '12px'};
+        box-shadow: 0 0 ${isVisitedPoint ? '30px' : '25px'} ${
+          isVisitedPoint ? '#00ff00' : 
+          styleConfig.cyberpunk ? '#ff00ff' : '#00aaff'
+        };
+        position: relative;
+        z-index: ${isVisitedPoint ? '200' : '100'};
+        transition: all 0.3s ease;
+        backdrop-filter: blur(5px);
+      `;
+      
+      el.textContent = isVisitedPoint ? '✓' : String(waypoint.chapter);
+      el.title = `${waypoint.title}\n${waypoint.occupation}\n📍 ${waypoint.location}${isVisitedPoint ? '\n✅ Visitado' : ''}`;
+
+      // Hover effects
+      el.addEventListener('mouseenter', () => {
+        el.style.transform = 'scale(1.3)';
+        el.style.zIndex = '1000';
+        el.style.boxShadow = `0 0 40px ${isVisitedPoint ? '#00ff00' : styleConfig.cyberpunk ? '#ff00ff' : '#00aaff'}`;
+      });
+      
+      el.addEventListener('mouseleave', () => {
+        el.style.transform = 'scale(1)';
+        el.style.zIndex = isVisitedPoint ? '200' : '100';
+        el.style.boxShadow = `0 0 ${isVisitedPoint ? '30px' : '25px'} ${isVisitedPoint ? '#00ff00' : styleConfig.cyberpunk ? '#ff00ff' : '#00aaff'}`;
+      });
+
+      // Click handler - open modal with full character data
+      el.addEventListener('click', (e) => {
+        setSelectedWaypoint(waypoint.fullCharacter);
+        e.stopPropagation();
+      });
+
+      const marker = new maptilersdk.Marker(el)
+        .setLngLat(waypoint.coordinates)
+        .addTo(map.current!);
+
+      markersRef.current.set(waypoint.chapter, marker);
+    });
+  }, [progressVisitedWaypoints, currentStyle]);
+
   // Update waypoints when data loads
   useEffect(() => {
     if (!dataLoading && !dataError) {
