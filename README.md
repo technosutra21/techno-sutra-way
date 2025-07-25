@@ -164,25 +164,52 @@ interface Character {
 }
 ```
 
-## ⚡ Performance & Otimizações
+## ⚡ Performance & Otimizações Implementadas
 
-### **Carregamento**
-- **Lazy loading** de componentes e modelos 3D
-- **Code splitting** automático via Vite
-- **Caching inteligente** com TanStack Query
-- **CSV parsing otimizado** com streaming
+### **Bundle Splitting & Lazy Loading**
+- **Code splitting automático** com Vite e rollupOptions
+- **Lazy loading** de componentes de página com React.lazy()
+- **Suspense boundaries** com fallbacks customizados
+- **Manual chunks** por categoria (vendor, UI, maps, models, animations)
 
-### **Rendering**
-- **Virtual scrolling** na galeria de personagens
-- **Memoização** de componentes pesados
+### **Caching & State Management**
+- **TanStack Query** para cache inteligente de dados CSV
+- **LocalStorage** para persistência de progresso e rotas
+- **Error boundaries** para recuperação de falhas
+- **Logger customizado** que respeita ambiente de desenvolvimento
+
+### **Rendering & UX**
 - **Animações otimizadas** com Framer Motion
-- **WebGL rendering** eficiente para modelos 3D
+- **Virtual scrolling** preparado para listas grandes
+- **Progress indicators** em tempo real
+- **Error handling** robusto com fallbacks visuais
 
-### **Dados**
-- **Compressão GLB** para modelos 3D
-- **CDN delivery** via GitHub Pages
-- **Cache local** de coordenadas e configurações
-- **Debounced search** para performance de busca
+### **Security & Accessibility**
+- **URL validation** para recursos externos
+- **Data sanitization** para conteúdo CSV
+- **ARIA labels** completos para screen readers
+- **Focus management** para navegação por teclado
+- **Keyboard navigation** otimizada
+
+## 📱 Recursos de Gamificação
+
+### **Sistema de Conquistas**
+- **Primeiro Passo** - Primeira visita a um waypoint
+- **Explorador** - 10 waypoints visitados  
+- **Meio Caminho** - 28 waypoints visitados
+- **Iluminado** - Jornada completa (56 waypoints)
+
+### **Tracking GPS Avançado**
+- **Geolocalização em tempo real** com precisão
+- **Detecção de proximidade** a waypoints sagrados
+- **Auto-marcação** quando próximo (< 50m)
+- **Notificações visuais** de conquistas
+
+### **Sistema de Internacionalização**
+- **Português** (idioma padrão)
+- **Inglês** (traduções completas)
+- **Sistema preparado** para novos idiomas
+- **Fallbacks inteligentes** para dados ausentes
 
 ## 🚀 Deploy & Build
 
