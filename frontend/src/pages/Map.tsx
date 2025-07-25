@@ -30,7 +30,7 @@ const MAP_STYLES = {
     id: 'cyberpunk',
     name: 'Cyberpunk',
     icon: Zap,
-    url: 'https://api.maptiler.com/maps/backdrop/style.json?key=rg7OAqXjLo7cLdwqlrVt',
+    url: 'backdrop',
     cyberpunk: true,
     description: 'Shadow base com inversão cyberpunk'
   },
@@ -38,7 +38,7 @@ const MAP_STYLES = {
     id: 'satellite',
     name: 'Satellite',
     icon: Satellite,
-    url: 'https://api.maptiler.com/maps/satellite/style.json?key=rg7OAqXjLo7cLdwqlrVt',
+    url: 'satellite',
     cyberpunk: false,
     description: 'Vista satelital do mundo'
   },
@@ -46,7 +46,7 @@ const MAP_STYLES = {
     id: 'simple',
     name: 'Simple',
     icon: Globe,
-    url: 'https://api.maptiler.com/maps/streets-v2/style.json?key=rg7OAqXjLo7cLdwqlrVt',
+    url: 'streets-v2',
     cyberpunk: false,
     description: 'Mapa comum e limpo'
   }
