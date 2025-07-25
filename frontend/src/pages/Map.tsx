@@ -4,12 +4,10 @@ import "@maptiler/sdk/dist/maptiler-sdk.css";
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
-  MapPin, Navigation, Route, Users, Zap, Search, Maximize, 
-  Minimize, LocateFixed, Target, Settings, Eye, EyeOff,
-  RefreshCw, Compass, Satellite, Layers, BookOpen, 
-  ExternalLink, QrCode, Share2, Download, Play
+  MapPin, Navigation, Zap, Search, Maximize, 
+  LocateFixed, Target, Eye, EyeOff, Compass, 
+  Satellite, Layers, Users, Globe, Monitor
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Input } from '@/components/ui/input';
@@ -17,7 +15,6 @@ import { useSutraData } from '@/hooks/useSutraData';
 import { CharacterDetailModal } from '@/components/CharacterDetailModal';
 import { logger } from '@/lib/logger';
 import { useProgress } from '@/hooks/useProgress';
-import GPSControls from '@/components/GPSControls';
 import { useToast } from '@/hooks/use-toast';
 
 // Base coordinates for Águas da Prata, SP
