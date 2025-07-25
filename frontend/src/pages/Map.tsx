@@ -1042,6 +1042,20 @@ const Map = () => {
           )}
         </Card>
       </motion.div>
+
+      {/* GPS Controls */}
+      <GPSControls
+        isTrackingUser={isTrackingUser}
+        userLocation={userLocation}
+        userAccuracy={userAccuracy}
+        nearbyWaypoints={nearbyWaypoints}
+        visitedCount={visitedCount}
+        totalProgress={totalProgress}
+        onStartTracking={startLocationTracking}
+        onStopTracking={stopLocationTracking}
+        onCenterOnUser={centerOnUser}
+        onMarkVisited={markAsVisited}
+      />
     </div>
   );
 };
