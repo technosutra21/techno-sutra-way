@@ -15,6 +15,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Input } from '@/components/ui/input';
 import { useSutraData } from '@/hooks/useSutraData';
 import { CharacterDetailModal } from '@/components/CharacterDetailModal';
+import { logger } from '@/lib/logger';
+import { useProgress } from '@/hooks/useProgress';
 
 // Base coordinates for Águas da Prata, SP
 const BASE_COORDINATES = {
