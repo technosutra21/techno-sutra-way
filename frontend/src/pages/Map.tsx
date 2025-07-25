@@ -1,12 +1,20 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import * as maptilersdk from '@maptiler/sdk';
 import "@maptiler/sdk/dist/maptiler-sdk.css";
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { MapPin, Navigation, Route, Users, Zap, Search, Maximize } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { 
+  MapPin, Navigation, Route, Users, Zap, Search, Maximize, 
+  Minimize, LocateFixed, Target, Settings, Eye, EyeOff,
+  RefreshCw, Compass, Satellite, Layers, BookOpen, 
+  ExternalLink, QrCode, Share2, Download, Play
+} from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Input } from '@/components/ui/input';
 import { useSutraData } from '@/hooks/useSutraData';
+import { CharacterDetailModal } from '@/components/CharacterDetailModal';
 
 // Base coordinates for Águas da Prata, SP
 const BASE_COORDINATES = {
@@ -17,61 +25,115 @@ const BASE_COORDINATES = {
 const Map = () => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<maptilersdk.Map | null>(null);
+  // User location and tracking states
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
+  const [isTrackingUser, setIsTrackingUser] = useState(false);
+  const [userAccuracy, setUserAccuracy] = useState<number | null>(null);
+  const [userMarker, setUserMarker] = useState<maptilersdk.Marker | null>(null);
+  const [locationWatchId, setLocationWatchId] = useState<number | null>(null);
+  const [nearbyWaypoints, setNearbyWaypoints] = useState<any[]>([]);
+  const [visitedWaypoints, setVisitedWaypoints] = useState<Set<number>>(new Set());
+  
+  // Map and UI states
   const [selectedWaypoint, setSelectedWaypoint] = useState<any>(null);
-  const [mapStyle, setMapStyle] = useState('backdrop'); // Use backdrop as base for cyberpunk effect
-  const [isCyberpunkMode, setIsCyberpunkMode] = useState(true); // Default to cyberpunk
+  const [mapStyle, setMapStyle] = useState('backdrop');
+  const [isCyberpunkMode, setIsCyberpunkMode] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredWaypoints, setFilteredWaypoints] = useState<any[]>([]);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [draggedWaypoint, setDraggedWaypoint] = useState<any>(null);
-  const markersRef = useRef<Map<number, maptilersdk.Marker>>(new Map());
+  const [showPanels, setShowPanels] = useState(true);
+  const [routeMode, setRouteMode] = useState<'pilgrimage' | 'nearest' | 'custom'>('pilgrimage');
+  
+  // References
+  const markersRef = useRef<globalThis.Map<number, maptilersdk.Marker>>(new globalThis.Map());
+  const accuracyCircleRef = useRef<maptilersdk.Marker | null>(null);
   
   // Load CSV data
   const { getCombinedData, loading: dataLoading, error: dataError } = useSutraData();
 
-  // Generate waypoints from CSV data with saved positions
+// State for fixed coordinates
+  const [fixedCoordinates, setFixedCoordinates] = useState<any>({});
+
+  // Load fixed coordinates from JSON file on mount
+  useEffect(() => {
+    const loadFixedCoordinates = async () => {
+      try {
+        const response = await fetch('/waypoint-coordinates.json');
+        if (response.ok) {
+          const coordinates = await response.json();
+          setFixedCoordinates(coordinates);
+          console.log('✅ Fixed coordinates loaded:', Object.keys(coordinates).length, 'waypoints');
+        } else {
+          console.warn('⚠️ Could not load fixed coordinates, using fallback positioning');
+        }
+      } catch (error) {
+        console.warn('⚠️ Error loading fixed coordinates:', error);
+      }
+    };
+    
+    loadFixedCoordinates();
+  }, []);
+
+  // Generate waypoints from CSV data with fixed coordinates only
   const generateWaypoints = () => {
     const sutraData = getCombinedData('pt');
     if (sutraData.length === 0) return [];
 
-    // Load saved positions from localStorage
-    const savedPositions = JSON.parse(localStorage.getItem('technosutra-waypoint-positions') || '{}');
+    // Filter and map waypoints to only include those with coordinates from the JSON file.
+    const waypointsWithCoords = sutraData.slice(0, 56).filter((entry) => {
+      return fixedCoordinates[entry.chapter];
+    }).map((entry) => {
+      // Use fixed coordinates from JSON file
+      const fixed = fixedCoordinates[entry.chapter];
+      const coordinates: [number, number] = [fixed.lng, fixed.lat];
 
-    return sutraData.map((entry, index) => ({
-      id: entry.chapter,
-      coordinates: savedPositions[entry.chapter] || [
-        BASE_COORDINATES.lng + (Math.random() - 0.5) * 0.012, // Spread over ~1.2km
-        BASE_COORDINATES.lat + (Math.random() - 0.5) * 0.012
-      ] as [number, number],
-      chapter: entry.chapter,
-      title: `${entry.nome}`,
-      subtitle: `Capítulo ${entry.chapter}`,
-      description: entry.descPersonagem || entry.ensinamento.substring(0, 200) + '...',
-      fullDescription: entry.descPersonagem,
-      teaching: entry.ensinamento,
-      occupation: entry.ocupacao,
-      meaning: entry.significado,
-      location: entry.local,
-      chapterSummary: entry.resumoCap,
-      model: entry.linkModel,
-      capUrl: entry.capUrl,
-      qrCodeUrl: entry.qrCodeUrl
-    }));
+      return {
+        id: entry.chapter,
+        coordinates,
+        chapter: entry.chapter,
+        title: `${entry.nome}`,
+        subtitle: `Capítulo ${entry.chapter}`,
+        description: entry.descPersonagem || entry.ensinamento.substring(0, 200) + '...',
+        fullDescription: entry.descPersonagem,
+        teaching: entry.ensinamento,
+        occupation: entry.ocupacao,
+        meaning: entry.significado,
+        location: entry.local,
+        chapterSummary: entry.resumoCap,
+        model: entry.linkModel,
+        capUrl: entry.capUrl,
+        qrCodeUrl: entry.qrCodeUrl
+      };
+    });
+
+    // Log missing waypoints for debugging
+    const missingWaypoints = sutraData.filter((entry) => {
+      return !fixedCoordinates[entry.chapter];
+    });
+    
+    if (missingWaypoints.length > 0) {
+      console.warn(`⚠️ ${missingWaypoints.length} waypoints missing coordinates:`, 
+        missingWaypoints.map(w => `Chapter ${w.chapter}: ${w.nome}`)
+      );
+    }
+    
+    console.log(`✅ Generated ${waypointsWithCoords.length} waypoints with fixed coordinates`);
+    return waypointsWithCoords;
   };
 
   const [waypoints, setWaypoints] = useState<any[]>([]);
 
-  // Update waypoints when data loads
+  // Update waypoints when data loads or fixed coordinates change
   useEffect(() => {
     if (!dataLoading && !dataError) {
       const newWaypoints = generateWaypoints();
       setWaypoints(newWaypoints);
       setFilteredWaypoints(newWaypoints);
     }
-  }, [dataLoading, dataError]);
+  }, [dataLoading, dataError, fixedCoordinates]);
 
   // Save waypoint positions
   const saveWaypointPosition = (chapterId: number, coordinates: [number, number]) => {
@@ -219,7 +281,13 @@ const Map = () => {
           'line-cap': 'round'
         },
         paint: {
-          'line-color': isCyberpunkMode ? '#ff00ff' : '#00ffff',
+          'line-gradient': [
+            'interpolate',
+            ['linear'],
+            ['line-progress'],
+            0, '#ff00ff',
+            1, '#00ffff'
+          ],
           'line-width': 4,
           'line-opacity': 0.8
         }
@@ -264,6 +332,14 @@ const Map = () => {
         // Create marker
         const marker = new maptilersdk.Marker(el, { draggable: editMode })
           .setLngLat(waypoint.coordinates)
+          .setPopup(new maptilersdk.Popup({ closeButton: false, offset: 25 })
+            .setHTML(`
+              <div class="cyberpunk-popup">
+                <h3 class="text-primary text-glow">${waypoint.title}</h3>
+                <p class="text-muted-foreground">Capítulo ${waypoint.chapter}</p>
+                <button class="cyberpunk-popup-button">Ver Detalhes</button>
+              </div>
+            `))
           .addTo(map.current!);
 
         // Add drag event listeners for edit mode
@@ -331,6 +407,190 @@ const Map = () => {
   const toggleFullscreen = () => {
     setIsFullscreen(!isFullscreen);
   };
+
+  // Calculate distance between two coordinates (Haversine formula)
+  const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
+    const R = 6371e3; // metres
+    const φ1 = lat1 * Math.PI/180; // φ, λ in radians
+    const φ2 = lat2 * Math.PI/180;
+    const Δφ = (lat2-lat1) * Math.PI/180;
+    const Δλ = (lon2-lon1) * Math.PI/180;
+
+    const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+              Math.cos(φ1) * Math.cos(φ2) *
+              Math.sin(Δλ/2) * Math.sin(Δλ/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+    return R * c; // in metres
+  };
+
+  // Update nearby waypoints based on user location
+  const updateNearbyWaypoints = useCallback((userLat: number, userLng: number) => {
+    const nearby = waypoints.filter(waypoint => {
+      const distance = calculateDistance(userLat, userLng, waypoint.coordinates[1], waypoint.coordinates[0]);
+      return distance <= 100; // Within 100 meters
+    }).sort((a, b) => {
+      const distA = calculateDistance(userLat, userLng, a.coordinates[1], a.coordinates[0]);
+      const distB = calculateDistance(userLat, userLng, b.coordinates[1], b.coordinates[0]);
+      return distA - distB;
+    });
+
+    setNearbyWaypoints(nearby);
+
+    // Auto-visit nearby waypoints
+    nearby.forEach(waypoint => {
+      const distance = calculateDistance(userLat, userLng, waypoint.coordinates[1], waypoint.coordinates[0]);
+      if (distance <= 50 && !visitedWaypoints.has(waypoint.chapter)) { // Within 50 meters
+        setVisitedWaypoints(prev => new Set([...prev, waypoint.chapter]));
+        toast({
+          title: "🎉 Waypoint Visitado!",
+          description: `Você chegou ao ${waypoint.title} - ${waypoint.occupation}`,
+          duration: 5000,
+        });
+      }
+    });
+  }, [waypoints, visitedWaypoints]);
+
+  // Start real-time location tracking
+  const startLocationTracking = useCallback(() => {
+    if (!navigator.geolocation) {
+      toast({
+        title: "Erro de Geolocalização",
+        description: "Seu dispositivo não suporta geolocalização",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const watchId = navigator.geolocation.watchPosition(
+      (position) => {
+        const userCoords: [number, number] = [
+          position.coords.latitude,
+          position.coords.longitude
+        ];
+        
+        setUserLocation(userCoords);
+        setUserAccuracy(position.coords.accuracy);
+        updateNearbyWaypoints(userCoords[0], userCoords[1]);
+
+        // Update user marker
+        if (map.current) {
+          if (userMarker) {
+            userMarker.setLngLat([userCoords[1], userCoords[0]]);
+          } else {
+            const marker = new maptilersdk.Marker({
+              color: '#00ffff',
+              scale: 1.5
+            })
+              .setLngLat([userCoords[1], userCoords[0]])
+              .addTo(map.current);
+            setUserMarker(marker);
+          }
+
+          // Update accuracy circle
+          if (accuracyCircleRef.current) {
+            accuracyCircleRef.current.remove();
+          }
+
+          if (position.coords.accuracy <= 100) { // Only show if accuracy is reasonable
+            const accuracyEl = document.createElement('div');
+            accuracyEl.style.cssText = `
+              width: ${position.coords.accuracy * 2}px;
+              height: ${position.coords.accuracy * 2}px;
+              border-radius: 50%;
+              background: rgba(0, 255, 255, 0.1);
+              border: 2px solid rgba(0, 255, 255, 0.3);
+              transform: translate(-50%, -50%);
+            `;
+
+            const accuracyMarker = new maptilersdk.Marker(accuracyEl)
+              .setLngLat([userCoords[1], userCoords[0]])
+              .addTo(map.current);
+            accuracyCircleRef.current = accuracyMarker;
+          }
+        }
+      },
+      (error) => {
+        console.error('Location error:', error);
+        toast({
+          title: "Erro de Localização",
+          description: "Não foi possível obter sua localização",
+          variant: "destructive",
+        });
+        setIsTrackingUser(false);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 1000
+      }
+    );
+
+    setLocationWatchId(watchId);
+    setIsTrackingUser(true);
+  }, [userMarker, updateNearbyWaypoints]);
+
+  // Stop location tracking
+  const stopLocationTracking = useCallback(() => {
+    if (locationWatchId !== null) {
+      navigator.geolocation.clearWatch(locationWatchId);
+      setLocationWatchId(null);
+    }
+    setIsTrackingUser(false);
+  }, [locationWatchId]);
+
+  // Center map on user location
+  const centerOnUser = useCallback(() => {
+    if (userLocation && map.current) {
+      map.current.flyTo({
+        center: [userLocation[1], userLocation[0]],
+        zoom: 18,
+        pitch: 60,
+        duration: 2000
+      });
+    } else {
+      toast({
+        title: "Localização não disponível",
+        description: "Ative o tracking para centralizar no usuário",
+      });
+    }
+  }, [userLocation]);
+
+  // Get nearest waypoint to user
+  const getNearestWaypoint = useCallback(() => {
+    if (!userLocation || waypoints.length === 0) return null;
+    
+    return waypoints.reduce((nearest, waypoint) => {
+      const distanceToWaypoint = calculateDistance(
+        userLocation[0], userLocation[1],
+        waypoint.coordinates[1], waypoint.coordinates[0]
+      );
+      const distanceToNearest = nearest ? calculateDistance(
+        userLocation[0], userLocation[1],
+        nearest.coordinates[1], nearest.coordinates[0]
+      ) : Infinity;
+      
+      return distanceToWaypoint < distanceToNearest ? waypoint : nearest;
+    }, null as any);
+  }, [userLocation, waypoints]);
+
+  // Navigate to nearest waypoint
+  const goToNearestWaypoint = useCallback(() => {
+    const nearest = getNearestWaypoint();
+    if (nearest) {
+      flyToWaypoint(nearest);
+      setSelectedWaypoint(nearest);
+    }
+  }, [getNearestWaypoint]);
+
+  // Clean up tracking on unmount
+  useEffect(() => {
+    return () => {
+      if (locationWatchId !== null) {
+        navigator.geolocation.clearWatch(locationWatchId);
+      }
+    };
+  }, [locationWatchId]);
 
   return (
     <div className={`${isFullscreen ? 'fixed inset-0 z-50' : 'h-screen'} relative overflow-hidden bg-background`}>
@@ -454,6 +714,72 @@ const Map = () => {
           )}
         </Card>
 
+        {/* Advanced Tracking Panel */}
+        <Card className="cyberpunk-card p-3">
+          <div className="flex items-center justify-between mb-2">
+            <h4 className="text-primary text-glow font-bold text-sm">Sistema de Tracking</h4>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowPanels(!showPanels)}
+              className="text-muted-foreground hover:text-primary"
+            >
+              {showPanels ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+            </Button>
+          </div>
+          
+          <div className="space-y-2">
+            <div className="flex gap-2">
+              <Button
+                variant={isTrackingUser ? "default" : "outline"}
+                size="sm"
+                onClick={isTrackingUser ? stopLocationTracking : startLocationTracking}
+                className={`flex-1 ${isTrackingUser ? 'gradient-neon text-black font-bold' : 'neon-glow'}`}
+              >
+                <LocateFixed className="w-3 h-3 mr-1" />
+                {isTrackingUser ? 'Parar' : 'Rastrear'}
+              </Button>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={centerOnUser}
+                className="flex-1 purple-glow"
+                disabled={!userLocation}
+              >
+                <Target className="w-3 h-3 mr-1" />
+                Centralizar
+              </Button>
+            </div>
+            
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={goToNearestWaypoint}
+              className="w-full border-green-500 text-green-400"
+              disabled={!userLocation}
+            >
+              <Compass className="w-4 h-4 mr-2" />
+              Ponto Mais Próximo
+            </Button>
+          </div>
+          
+          {userLocation && (
+            <div className="mt-2 p-2 bg-primary/10 border border-primary/30 rounded text-xs">
+              <div className="text-primary font-bold">📍 Status da Localização</div>
+              <div className="text-muted-foreground">
+                Precisão: {userAccuracy ? `${Math.round(userAccuracy)}m` : 'N/A'}
+              </div>
+              <div className="text-muted-foreground">
+                Próximos: {nearbyWaypoints.length} waypoint(s)
+              </div>
+              <div className="text-green-400">
+                Visitados: {visitedWaypoints.size}/56
+              </div>
+            </div>
+          )}
+        </Card>
+
         {/* Style Controls */}
         <div className="space-y-2">
           <Button 
@@ -490,26 +816,6 @@ const Map = () => {
           >
             <Route className="w-4 h-4 mr-2" />
             Modo Clássico
-          </Button>
-          
-          {/* Debug button - temporary */}
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="w-full text-xs text-yellow-400 border-yellow-400"
-            onClick={() => {
-              console.log('🔧 Debug - Estado atual:', { 
-                mapStyle, 
-                isCyberpunkMode, 
-                hasClass: mapContainer.current?.classList.contains('cyberpunk-map') 
-              });
-              // Force toggle cyberpunk
-              if (mapContainer.current) {
-                mapContainer.current.classList.toggle('cyberpunk-map');
-              }
-            }}
-          >
-            🔧 Debug Cyberpunk
           </Button>
         </div>
       </motion.div>
@@ -668,7 +974,11 @@ const Map = () => {
         )}
       </AnimatePresence>
 
-      {/* Enhanced Stats Panel */}
+      <CharacterDetailModal 
+        isOpen={!!selectedWaypoint}
+        onClose={() => setSelectedWaypoint(null)}
+        character={selectedWaypoint}
+      />
       <motion.div
         initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}

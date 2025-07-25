@@ -222,23 +222,25 @@ export const useSutraData = () => {
       
       if (language === 'pt') {
         const ptChar = char as Character;
+        const enChar = data.charactersEN.find(c => c.chapter === ptChar.capitulo);
+        
         return {
           id: ptChar.id,
           chapter: ptChar.capitulo,
           nome: ptChar.nome,
-          name: data.charactersEN.find(c => c.chapter === ptChar.capitulo)?.name || ptChar.nome,
+          name: enChar?.name || ptChar.nome,
           ocupacao: ptChar.ocupacao,
-          occupation: data.charactersEN.find(c => c.chapter === ptChar.capitulo)?.occupation || ptChar.ocupacao,
+          occupation: enChar?.occupation || ptChar.ocupacao,
           significado: ptChar.significado,
-          meaning: data.charactersEN.find(c => c.chapter === ptChar.capitulo)?.meaning || ptChar.significado,
+          meaning: enChar?.meaning || ptChar.significado,
           local: ptChar.local,
-          location: data.charactersEN.find(c => c.chapter === ptChar.capitulo)?.location || ptChar.local,
+          location: enChar?.location || ptChar.local,
           ensinamento: ptChar.ensinamento,
-          teaching: data.charactersEN.find(c => c.chapter === ptChar.capitulo)?.teaching || ptChar.ensinamento,
+          teaching: enChar?.teaching || ptChar.ensinamento,
           descPersonagem: ptChar.descPersonagem,
-          characterDesc: data.charactersEN.find(c => c.chapter === ptChar.capitulo)?.characterDesc || ptChar.descPersonagem,
+          characterDesc: enChar?.characterDesc || ptChar.descPersonagem,
           resumoCap: ptChar.resumoCap,
-          chapterSummary: data.charactersEN.find(c => c.chapter === ptChar.capitulo)?.chapterSummary || ptChar.resumoCap,
+          chapterSummary: enChar?.chapterSummary || ptChar.resumoCap,
           linkModel: ptChar.linkModel,
           capUrl: ptChar.capUrl,
           qrCodeUrl: ptChar.qrCodeUrl,
@@ -252,18 +254,20 @@ export const useSutraData = () => {
         };
       } else {
         const enChar = char as CharacterEN;
+        const ptChar = data.characters.find(c => c.capitulo === enChar.chapter);
+        
         return {
           id: enChar.id,
           chapter: enChar.chapter,
-          nome: data.characters.find(c => c.capitulo === enChar.chapter)?.nome || enChar.name,
+          nome: ptChar?.nome || enChar.name,
           name: enChar.name,
-          ocupacao: data.characters.find(c => c.capitulo === enChar.chapter)?.ocupacao || enChar.occupation,
+          ocupacao: ptChar?.ocupacao || enChar.occupation,
           occupation: enChar.occupation,
-          significado: data.characters.find(c => c.capitulo === enChar.chapter)?.significado || enChar.meaning,
+          significado: ptChar?.significado || enChar.meaning,
           meaning: enChar.meaning,
-          local: data.characters.find(c => c.capitulo === enChar.chapter)?.local || enChar.location,
+          local: ptChar?.local || enChar.location,
           location: enChar.location,
-          ensinamento: data.characters.find(c => c.capitulo === enChar.chapter)?.ensinamento || enChar.teaching,
+          ensinamento: ptChar?.ensinamento || enChar.teaching,
           teaching: enChar.teaching,
           descPersonagem: data.characters.find(c => c.capitulo === enChar.chapter)?.descPersonagem || enChar.characterDesc,
           characterDesc: enChar.characterDesc,
