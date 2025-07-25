@@ -157,7 +157,7 @@ const Map = () => {
       logger.info('🔧 MODO DE EDIÇÃO ATIVADO - Arraste os pontos para reposicionar');
     } else {
       // Exiting edit mode
-      console.log('✅ MODO DE EDIÇÃO DESATIVADO - Posições salvas');
+      logger.info('✅ MODO DE EDIÇÃO DESATIVADO - Posições salvas');
     }
   };
 
