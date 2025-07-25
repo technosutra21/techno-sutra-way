@@ -142,7 +142,7 @@ const Map = () => {
     
     logger.info(`✅ Generated ${waypointsWithCoords.length} waypoints with coordinates`);
     return waypointsWithCoords;
-  }, [getCombinedData, fixedCoordinates]);
+  }, [fixedCoordinates, dataLoading, dataError]); // Remove getCombinedData from dependencies
 
   // Update waypoints when data loads
   useEffect(() => {
