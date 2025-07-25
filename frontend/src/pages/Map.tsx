@@ -67,7 +67,7 @@ const Map = () => {
         if (response.ok) {
           const coordinates = await response.json();
           setFixedCoordinates(coordinates);
-          console.log('✅ Fixed coordinates loaded:', Object.keys(coordinates).length, 'waypoints');
+          logger.info('✅ Fixed coordinates loaded:', Object.keys(coordinates).length, 'waypoints');
         } else {
           console.warn('⚠️ Could not load fixed coordinates, using fallback positioning');
         }
