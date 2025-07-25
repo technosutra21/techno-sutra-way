@@ -66,6 +66,9 @@ const Map = () => {
     markAsVisited, 
     isVisited 
   } = useProgress();
+  
+  // Toast notifications
+  const { toast } = useToast();
 
 // State for fixed coordinates
   const [fixedCoordinates, setFixedCoordinates] = useState<any>({});
