@@ -25,8 +25,7 @@ export default defineConfig(({ mode }) => ({
 
   // Handle model-viewer dependencies
   optimizeDeps: {
-    include: ['@google/model-viewer'],
-    exclude: ['three']
+    include: ['@google/model-viewer', 'three']
   },
 
   // Server configuration
