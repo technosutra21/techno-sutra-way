@@ -8,6 +8,7 @@ export default defineConfig(({ mode }) => ({
   build: {
     outDir: 'build',
     rollupOptions: {
+      external: mode === 'production' ? [] : undefined,
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
@@ -20,6 +21,12 @@ export default defineConfig(({ mode }) => ({
         }
       }
     }
+  },
+
+  // Handle model-viewer dependencies
+  optimizeDeps: {
+    include: ['@google/model-viewer'],
+    exclude: ['three']
   },
 
   // Server configuration
