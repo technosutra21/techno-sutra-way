@@ -31,6 +31,7 @@ const translations = {
     'home.createRouteDesc': 'Crie sua própria jornada espiritual em qualquer lugar do mundo',
     'home.journeyNumbers': 'A Jornada em Números',
     'home.sacredChapters': 'Capítulos Sagrados',
+    'home.visitedPoints': 'Pontos Visitados',
     'home.models3d': 'Modelos 3D',
     'home.possibleRoutes': 'Rotas Possíveis',
     'home.spiritualDestination': 'Destino Espiritual',
