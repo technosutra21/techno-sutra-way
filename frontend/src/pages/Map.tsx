@@ -790,7 +790,7 @@ const Map = () => {
                 Próximos: {nearbyWaypoints.length} waypoint(s)
               </div>
               <div className="text-green-400">
-                Visitados: {visitedWaypoints.size}/56
+                Visitados: {visitedCount}/56
               </div>
             </div>
           )}
