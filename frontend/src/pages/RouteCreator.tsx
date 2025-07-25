@@ -78,7 +78,7 @@ const RouteCreator = () => {
     const handleMapClick = (e: any) => {
       if (!isCreating) return;
 
-      console.log('Map clicked!', e.lngLat);
+      logger.info('Map clicked!', e.lngLat);
       
       const coordinates: [number, number] = [e.lngLat.lng, e.lngLat.lat];
       const newWaypoint: CustomWaypoint = {
