@@ -11,6 +11,14 @@ import { useLanguage } from '@/components/LanguageSwitcher';
 
 const Home = () => {
   const { getCombinedData, loading: dataLoading } = useSutraData();
+  const { t } = useLanguage();
+  const { 
+    visitedCount, 
+    totalProgress, 
+    achievements, 
+    getAchievementTitle, 
+    isComplete 
+  } = useProgress();
   const [randomCharacters, setRandomCharacters] = useState<any[]>([]);
 
   // Get random characters for showcase
