@@ -215,8 +215,10 @@ const Map = () => {
           mapContainer.current.classList.remove('cyberpunk-map');
         }
         
-        // Add waypoints to map
-        addWaypointsToMap(waypoints);
+        // Add waypoints to map when both map is loaded and waypoints are ready
+        if (waypoints.length > 0) {
+          addWaypointsToMap(waypoints);
+        }
       });
 
       // Error handling
@@ -246,7 +248,14 @@ const Map = () => {
       }
       map.current?.remove();
     };
-  }, [currentStyle, waypoints, toast]);
+  }, [currentStyle, toast]); // Remove waypoints from dependencies
+
+  // Separate useEffect for adding waypoints when they're ready
+  useEffect(() => {
+    if (map.current && waypoints.length > 0 && !isLoading) {
+      addWaypointsToMap(waypoints);
+    }
+  }, [waypoints, isLoading, addWaypointsToMap]);
 
   // Add waypoints to map
   const addWaypointsToMap = useCallback((waypointsToAdd: any[]) => {
