@@ -63,7 +63,7 @@ const RouteCreator = () => {
 
     // Map loaded event
     map.current.on('load', () => {
-      console.log('Map loaded successfully');
+      logger.info('Map loaded successfully');
     });
 
     return () => {
