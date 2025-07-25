@@ -56,6 +56,15 @@ const Map = () => {
   
   // Load CSV data
   const { getCombinedData, loading: dataLoading, error: dataError } = useSutraData();
+  
+  // Progress tracking
+  const { 
+    visitedWaypoints: progressVisitedWaypoints, 
+    totalProgress, 
+    visitedCount, 
+    markAsVisited, 
+    isVisited 
+  } = useProgress();
 
 // State for fixed coordinates
   const [fixedCoordinates, setFixedCoordinates] = useState<any>({});
